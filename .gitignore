@@ -1,0 +1,130 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# DotEnv configuration
+.env
+
+# Database
+*.db
+*.rdb
+
+# Pycharm
+.idea
+
+# VS Code
+.vscode/
+
+# Spyder
+.spyproject/
+
+# Jupyter NB Checkpoints
+.ipynb_checkpoints/
+
+
+
+# Mac OS-specific storage files
+.DS_Store
+
+# vim
+*.swp
+*.swo
+
+# Mypy cache
+.mypy_cache/
+
+# Ignore wandb folder
+**/wandb/
+
+# Ignore models folder
+models/*
+!models/.gitkeep
+
+# Ignore test_notebook.ipynb
+**/test_notebook.ipynb
+
+# Ignore .conda
+**/.conda/**
+
+# Ignore everything in **data/raw/
+**/data/raw/*
+!**/data/raw/.gitkeep
+
+# Ignore everything in **data/interim/
+**/data/interim/*
+**/data/splits/*
+!**/data/interim/.gitkeep
+**/data/splits/*
+
+# ignore .metaflow
+**/.metaflow
+
+# ignore output folders
+**/output/*
+**/outputs/*
+
+# ignore everything in the samples folder
+**/samples/*
+
+# ignore everything in the cache_dir folder
+**/cache_dir/*
+
+# ignore event logs
+**/events.out.tfevents.*
+
+**/smiles-cgr-transformers.tar
+notebooks/lightning_logs/

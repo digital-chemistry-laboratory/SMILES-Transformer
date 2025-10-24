@@ -1,0 +1,68 @@
+<svg width="5.07cm" height="3.73cm" viewBox="-4.20 -2.28 5.07 3.73" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <g>
+    <defs>
+      <mask id="mask-41f05fe1-5043-471d-852f-76f7833996cb">
+        <rect x="-4.20" y="-2.28" width="5.07" height="3.73" fill="white"/>
+        <g fill="black">
+          <circle cx="-1.73" cy="0.30" r="0.20"/>
+          <circle cx="-2.56" cy="-1.13" r="0.20"/>
+          <circle cx="-3.38" cy="-1.13" r="0.20"/>
+          <circle cx="-2.86" cy="0.83" r="0.20"/>
+          <circle cx="-3.57" cy="-0.41" r="0.20"/>
+          <circle cx="0.00" cy="-0.00" r="0.20"/>
+          <circle cx="-1.43" cy="-1.65" r="0.20"/>
+        </g>
+        <g font-family="monospace" stroke="black">
+          <g font-family="sans-serif" font-size="0.50" stroke-width="0.05">
+           <text x="-1.73" y="0.30" dx="-0.20" dy="0.20">H</text>
+           <text x="-2.56" y="-1.13" dx="-0.20" dy="0.20">O</text>
+           <text x="-3.38" y="-1.13" dx="-0.20" dy="0.20">H</text>
+           <text x="-2.86" y="0.83" dx="-0.20" dy="0.20">H</text>
+           <text x="-3.57" y="-0.41" dx="-0.20" dy="0.20">O</text>
+           <text x="0.00" y="-0.00" dx="-0.20" dy="0.20">H</text>
+           <text x="-1.43" y="-1.65" dx="-0.20" dy="0.20">H</text>
+          </g>
+        </g>
+      </mask>
+    </defs>
+    <g fill="none" stroke="black" stroke-width="0.04"  mask="url(#mask-41f05fe1-5043-471d-852f-76f7833996cb)">
+      <line x1="-1.73" y1="0.30" x2="-2.14" y2="-0.41" stroke="red"/>
+      <line x1="-2.14" y1="-0.41" x2="-2.56" y2="-1.13"/>
+      <line x1="-2.14" y1="-0.41" x2="-2.86" y2="0.00"/>
+      <line x1="-2.17" y1="-0.46" x2="-1.46" y2="-0.88"/>
+      <line x1="-2.11" y1="-0.36" x2="-1.40" y2="-0.77" stroke="green"/>
+      <line x1="-2.56" y1="-1.13" x2="-3.38" y2="-1.13"/>
+      <line x1="-2.86" y1="0.00" x2="-2.86" y2="0.83"/>
+      <line x1="-2.89" y1="0.05" x2="-3.60" y2="-0.36"/>
+      <line x1="-2.83" y1="-0.05" x2="-3.54" y2="-0.46"/>
+      <line x1="-1.36" y1="-0.94" x2="-0.65" y2="-0.53"/>
+      <line x1="-1.43" y1="-0.83" x2="-0.71" y2="-0.41" stroke="red"/>
+      <line x1="-1.49" y1="-0.71" x2="-0.78" y2="-0.30" stroke="red"/>
+      <line x1="-1.43" y1="-0.83" x2="-1.43" y2="-1.65" stroke="green"/>
+      <line x1="-0.71" y1="-0.41" x2="0.00" y2="-0.00"/>
+    </g>
+    <g font-family="monospace">
+      <g fill="#909090" font-family="sans-serif">
+        <text x="-1.73" y="0.30" dx="-0.20" dy="0.20" font-size="0.50">H</text>
+      </g>
+      <g fill="#FF0D0D" font-family="sans-serif">
+        <text x="-2.56" y="-1.13" dx="-0.20" dy="0.20" font-size="0.50">O</text>
+      </g>
+      <g fill="#909090" font-family="sans-serif">
+        <text x="-3.38" y="-1.13" dx="-0.20" dy="0.20" font-size="0.50">H</text>
+      </g>
+      <g fill="#909090" font-family="sans-serif">
+        <text x="-2.86" y="0.83" dx="-0.20" dy="0.20" font-size="0.50">H</text>
+      </g>
+      <g fill="#FF0D0D" font-family="sans-serif">
+        <text x="-3.57" y="-0.41" dx="-0.20" dy="0.20" font-size="0.50">O</text>
+      </g>
+      <g fill="#909090" font-family="sans-serif">
+        <text x="0.00" y="-0.00" dx="-0.20" dy="0.20" font-size="0.50">H</text>
+      </g>
+      <g fill="#909090" font-family="sans-serif">
+        <text x="-1.43" y="-1.65" dx="-0.20" dy="0.20" font-size="0.50">H</text>
+      </g>
+    </g>
+  </g>
+</svg>

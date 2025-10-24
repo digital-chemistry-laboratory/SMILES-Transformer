@@ -1,0 +1,37 @@
+Bootstrap: docker
+From: python:3.10.4
+
+%files
+    smiles_transformer/ /smiles_transformer/
+    requirements.txt /requirements.txt
+    setup.py /setup.py
+
+%environment
+    export WANDB_API_KEY=""
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export WANDB_CACHE_DIR=""
+    export WANDB_DATA_DIR=""
+
+
+%post
+    # Install necessary packages
+    apt-get update && apt-get install -y python3-pip
+    pip install --upgrade pip
+    pip install --no-cache-dir -r /requirements.txt
+    pip install .
+
+    # Create necessary directories
+    mkdir -p /data/
+    mkdir -p /configurations/
+    mkdir -p /outputs/
+
+%runscript
+    # Check if any arguments are provided
+    if [ -z "$*" ]; then
+        echo "No arguments provided. Please specify a Python module or script to run."
+        exit 1
+    else
+        # Run the specified Python module/script with the provided arguments
+        exec python -m $*
+    fi

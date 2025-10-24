@@ -1,0 +1,240 @@
+# ------------------------------------------
+# ---- GENERAL SETTINGS -------------------
+# ------------------------------------------
+general_settings:
+  # Verbose: True for printing out information, False for not printing out information
+  verbose: True
+
+  # Test Mode: True for enabled, False for disabled
+  test_mode: False
+
+  # Tokenizer kind: can be 'single', 'individual' or 'BPE'
+  tokenizer_kind: 'individual'
+
+  # Random State, used for reproducability. This does not apply to the model initialization etc.
+  # Set to null in a general use case, set to True only if you know what you are doing.
+  random_state: null
+
+  # Save model to wandb?
+  save_model_to_wandb: False
+
+  # Wandb labels
+  tags: [ ]
+
+  #Absolute path to outputs, where the models are saved
+  path_to_outputs: C:\git\smiles-cgr-transformers\outputs #### change this to your own path
+# ------------------------------------------
+# ---- TEST SETTINGS ----------------------
+# ------------------------------------------
+test_settings:
+  # Size of the test set
+  # float or int, default=None If float
+  # in the test split. If int, represents the absolute number of test samples.
+  # If None, the value is set to the complement of the train size. If train_size is also None, it will be set to 0.25.
+  test_size: 0.1
+  eval_size: 0.1
+
+  # If launching CV, this is taken as the number of folds.
+  # If the folds are aldready made,
+  # and prepared like in this example: https://github.com/hesther/reactiondatabase/tree/main/data_splits, write 'premade'.
+  # leave null if no cross-validation is performed.
+  n_folds: null
+
+# ------------------------------------------
+# ---- VOCABULARY SETTINGS -----------------
+# ------------------------------------------
+vocabulary_settings:
+  # Generate a new vocabulary file
+  generate_vocab: True
+  # Delete vocab files and regenerate them from scratch
+  from_scratch: True
+  # Sampling the dataset instead of using the whole dataset to create the vocab? (at your own risk...)
+  sampling: False
+  sample_size: 400000
+  # If True, the program terminates after the vocabulary is created
+  # Used if you only want to create a vocabulary but not train the model
+  terminate_after_vocab_creation: False
+  # Absolute path to vocabulary FOLDER.
+  path_to_vocab_folder: C:\git\smiles-cgr-transformers\data\vocab
+
+  #for BPE:
+  max_vocab_size: 200
+  min_frequency: 2
+
+
+# ------------------------------------------
+# ---- TRAINING SETTINGS -------------------
+# ------------------------------------------
+training_settings:
+  # Training Epochs. Mutually exclusive with num_steps.
+  num_train_epochs: 1
+
+  # Training_steps. Mutually exclusive with num_epochs.
+  num_train_steps: 15000
+
+  learning_rate: 0.0002
+
+  # Probability of hidden dropout
+  hidden_dropout: 0.4
+
+  # Model size: {'bert': {'base': {'hidden_size': 756, 'intermediate_size': 3072, 'num_attention_heads': 12}, 'small': {'hidden_size': 256, 'intermediate_size': 512, 'num_attention_heads': 4}},
+  #  'electra': {'small': {'hidden_size': 256, 'intermediate_size': 1024, 'num_attention_heads': 4, 'embedding_size': 128}, 'base': {'hidden_size': 768, 'intermediate_size': 1024, 'num_attention_heads': 12, 'embedding_size': 128}}}
+  model_size: 'small'
+
+  # For finetuning, the number of layers in the FFN that finally predicts the property
+  n_layers: 3
+
+  # For finetuning, the number of neurons per layer of the FFN that finally predicts the property
+  layer_width: 1200
+
+  # Probability of masking
+  mask_p: 0.15 #deactivated for now, would need reimplementation
+
+  # Maximal sequence length. Anything beyond the token at index {max_length} will be truncated.
+  max_length: 512
+
+  # 'bert' or 'electra'
+  model_type: 'bert'
+
+  # mode can be 'pretraining', 'regression' or 'classification'
+  model_mode: 'pretraining'
+
+  # if model_mode is 'pretraining': The run to take to resume the model from. If the training should continue from a checkpoint, make sure to specify a checkpoint_number.
+  # if model_mode is 'finetuning': the run_name of the pretrained model.
+  run_name: null
+
+  warmup_ratio: 0.04
+
+  # Having trouble by running out of GPU memory? try to increase gradient accumulation and/or enable fp16:
+  gradient_accumulation_steps: 1
+
+  # Per device batch size.
+  batch_size: 64
+
+  #will reduce batch size automatically if out of memory:
+  auto_find_batch_size: False
+
+  fp16: False
+
+  # Number of steps between 2 evaluation computation:
+  eval_steps: 20
+
+  # number of steps to wait before logging again
+  logging_steps: 20
+
+  # Patience: number of steps after which the model stops if it has not improved. null will disable early stopping
+  early_stopping_patience: 100
+
+  early_stopping_threshold: 0.0005
+
+  # If the training should be continued from checkpoint, the checkpoint number should be indicated. Null means from scratch. 'last' for loading the last checkpoint.
+  checkpoint_number: null
+
+  # Maximum number of checkpoints saved. older checkpoints are removed. Disable this with null
+  save_total_limit: 3
+
+
+# ------------------------------------------
+# ---- DATASET SETTINGS -------------------
+# ------------------------------------------
+#If wanted, the script will exit after remapping or after converting. If both are true, the script will just exit after remapping and not get to converting
+dataset_settings:
+  # Dataset Parameters
+
+  # Absolute path to the dataset
+  # Format: /path/to/data/
+  dataset_folder: C:\git\smiles-cgr-transformers\data\interim
+  # Name of csv file. (ex: 'e2sn2.csv')
+  dataset_name: 'e2sn2.csv'
+  # Name of Input column (ex: )
+  column_name: 'AAM'
+  # should the smiles be converted into another representation?
+  # Note: if the input is already a the wanted representation, then this needs to be null.
+  # options are "null", "SMILES/CGR", and "sr-SMILES"
+  convert_to: sr-SMILES
+
+  # settings for sr-smiles. these settings can be added or removed as needed.
+  sr_smiles_settings:
+    - keep_atom_mapping: False
+    - remove_brackets: False
+    - remove_hydrogens: False
+    - balance_rxn: False
+    - kekulize: False
+    - keep_aromatic_bonds: False
+
+
+  # column name of target variable:
+  label_column_name: 'ea'
+  separator: ','
+  # min and max number of bond changes in a reaction. Used to avoid multi step reactions and reactions with no changes
+  # if 0, no filter limit is applied. if not dealing with CGR, these should be set to 0.
+  n_max_bond_changes: 0
+  n_min_bond_changes: 0
+
+  # Scaling the target values using sklearn's StandardScaler. Only works for regression:
+  scale_target: True
+
+  # columns of additional features to be added to the final linear layer
+  #format: [feature_a, feature_b, feature_c]
+  additional_features: null
+
+  # Invert reactants and products?
+  invert_reactions: False
+
+  # features can be augmented. Currently implemented:
+  #     'smiles': augment smiles
+  #     'cgr': augment CGR
+  # Syntax: You need to specify how many times a reaction should be augmented, separated by a colon:
+  #     ex: to create 10 augmented SMILES reactions for every reaction, the 'augment' argument should be set to 'smiles:10'
+  # Deactivated if null
+  augment: null
+
+  # fix nitro groups if they are wrongly created:
+  fix_nitro: False
+
+  # Run explicify_hydrogens on smiles in CGRTools. This should be on as otherwise some information will be missing, impacting model performance
+  explicify_hydrogens: False
+
+  # filter out specific pattern. This is applied in the end, so on the final product. Case sensitive.
+  # Syntax: you need to specify if you want points with this pattern or only points without this pattern.
+  #     ex: to only select points that have '(O)' in them, set pattern_to_filter_out as 'with:(O)'.
+  #         to only select points that do not have '(O)' in them, set pattern_to_filter_out as 'without:(O)'.
+  pattern_to_filter_out: null
+
+
+  # Mapping can be removed by setting 'mapping' to remove
+  # The smiles can be remapped by setting 'mapping' to remap
+  # The mapping can be removed and then redone by setting 'mapping' to: [remove, remap]
+  mapping: null
+  remap_confidence_column_name: null
+  remap_confidence_threshold: null
+
+  # Save the preprocessed and tokenized dataset to file to avoid preprocessing/tokenizing the dataset again?
+  # If null, does not save
+  save_dataset_path: null
+  # load a saved datasetdict object by giving the path to this object
+  # deactivated when set to null
+  load_dataset_path: null
+
+  # Number of rows to read from the dataset, null is everything
+  # for premade datasets, a fraction of the training dataset can be used by setting this to a float.
+  n_datapoints: 100
+
+descriptors_settings:
+
+  # Which atomic descriptors should be included, if none should be included, set to null.
+  # This is a list of descriptors, ex: [ 'descr_1', 'descr_2', 'descr_3']
+  atomic_descriptors: null #[ 'npa_charge', 'npa_charge_plus', 'npa_charge_minus', 'npa_parr_neu', 'npa_parr_elec', 'shielding_constants', '1s_val_occ', '2s_val_occ', '2p_val_occ', '3s_val_occ', '3p_val_occ', '4s_val_occ', '4p_val_occ' ]
+
+  # Which molecular descriptors should be included, if none should be included, set to null.
+  # This is a list of descriptors, ex: [ 'descr_1', 'descr_2', 'descr_3']
+  molecular_descriptors: null #['HOMO-3/LUMO', 'HOMO-3/LUMO+1', 'HOMO-3/LUMO+2', 'HOMO-3/LUMO+3', 'HOMO-2/LUMO', 'HOMO-2/LUMO+1', 'HOMO-2/LUMO+2', 'HOMO-2/LUMO+3', 'HOMO-1/LUMO', 'HOMO-1/LUMO+1', 'HOMO-1/LUMO+2', 'HOMO-1/LUMO+3', 'HOMO/LUMO', 'HOMO/LUMO+1', 'HOMO/LUMO+2', 'HOMO/LUMO+3', 'mulliken_dipole_tot', 'mulliken_quadrupoles', 'IP', 'EA']
+
+  # Which descriptors should be binned by the binner.
+  descriptors_to_bin: null #['npa_charge', 'npa_charge_plus', 'npa_charge_minus', 'npa_parr_neu', 'npa_parr_elec', 'shielding_constants', '1s_val_occ', '2s_val_occ', '2p_val_occ', '3s_val_occ', '3p_val_occ', '4s_val_occ', '4p_val_occ', 'bond_index_matrix', 'bond_length_matrix', 'mulliken_condensed_charge_matrix', 'natural_ionicity', 'HOMO-3/LUMO', 'HOMO-3/LUMO+1', 'HOMO-3/LUMO+2', 'HOMO-3/LUMO+3', 'HOMO-2/LUMO', 'HOMO-2/LUMO+1', 'HOMO-2/LUMO+2', 'HOMO-2/LUMO+3', 'HOMO-1/LUMO', 'HOMO-1/LUMO+1', 'HOMO-1/LUMO+2', 'HOMO-1/LUMO+3', 'HOMO/LUMO', 'HOMO/LUMO+1', 'HOMO/LUMO+2', 'HOMO/LUMO+3', 'mulliken_dipole_tot', 'mulliken_quadrupoles', 'IP', 'EA']
+
+  # How many bins are created per descriptor
+  num_bins: 7
+
+  # Which of the following binning strategy should be used: 'uniform', 'quantile', or 'kmeans'.
+  binning_strategy: 'uniform'

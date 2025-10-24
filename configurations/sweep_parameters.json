@@ -1,0 +1,18 @@
+{
+    "method": "bayes",
+    "name": "pretraining_sweep",
+    "metric": {
+        "goal": "minimize",
+        "name": "MAE"
+    },
+    "parameters": {
+        "dropout": {
+            "min": 0.0,
+            "max": 0.9
+        },
+        "learning_rate": {
+            "min": 1e-07,
+            "max": 0.001
+        }
+    }
+}
