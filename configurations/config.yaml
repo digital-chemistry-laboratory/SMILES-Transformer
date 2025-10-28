@@ -11,8 +11,8 @@ general_settings:
   # Tokenizer kind: can be 'single', 'individual' or 'BPE'
   tokenizer_kind: 'individual'
 
-  # Random State, used for reproducability. This does not apply to the model initialization etc.
-  # Set to null in a general use case, set to True only if you know what you are doing.
+  # Random State, used for reproducibility. Note: if this is not null, do NOT create a vocabulary (set all vocab settings to False).
+  # Set to null in a general use case.
   random_state: null
 
   # Save model to wandb?

@@ -19,7 +19,8 @@ from smiles_transformer.evaluation import *
 from smiles_transformer.tokenizer import *
 from datetime import datetime
 import json
-
+import random
+import numpy as np
 
 def preprocess(params):
     """
@@ -323,6 +324,26 @@ def preprocess(params):
     )
 
 
+
+
+def seed_everything(seed=42):
+    os.environ['PYTHONHASHSEED'] = '42'
+    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+    import torch
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    # CRITICAL: These two lines make CUDA operations deterministic
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    # For PyTorch >= 1.8
+    torch.use_deterministic_algorithms(True, warn_only=True)
+
+
 def train(
     params,
     X,
@@ -579,7 +600,7 @@ def main(path_to_config_folder, alternative_config={}):
 
     for category in alternative_config:
         params[category].update(alternative_config[category])
-
+    seed_everything(params["general_settings"]["random_state"])
     (
         X,
         vocab,
