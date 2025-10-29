@@ -9,6 +9,9 @@ from torch import nn
 from smiles_transformer.model.featureaugmentedclassificationbert import (
     FeatureAugmentedClassificationBERT,
 )
+from smiles_transformer.modelization.compute_metric_for_classification import (
+    compute_metrics_for_classification,
+)
 from smiles_transformer.modelization.compute_metric_for_regression import (
     compute_metrics_for_regression,
 )
@@ -81,6 +84,11 @@ class FinetuningModelFactory(BaseModelFactory):
             )
 
         data_collator = DataCollatorWithPadding(tokenizer=self.smilestokenizer)
+        if self.n_labels > 1:
+            compute_metrics = compute_metrics_for_classification
+        else:
+            compute_metrics = compute_metrics_for_regression
+        
         return Trainer(
             model=self.init_model(),
             train_dataset=self.dataset["train"],
@@ -88,7 +96,7 @@ class FinetuningModelFactory(BaseModelFactory):
             args=training_args,
             tokenizer=self.smilestokenizer,
             data_collator=data_collator,
-            compute_metrics=compute_metrics_for_regression,
+            compute_metrics=compute_metrics,
             callbacks=callbacks,
             model_init=self.init_model,
         )
