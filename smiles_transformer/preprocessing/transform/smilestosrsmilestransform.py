@@ -4,7 +4,7 @@ from smiles_transformer.preprocessing.transform.transformtemplate import (
     TransformTemplate,
 )
 from tqdm import tqdm
-from cgr_smiles import rxn_to_cgr
+from sr_smiles import rxn_to_sr
 
 
 class SMILEStoSRSMILESTransform(TransformTemplate):
@@ -28,7 +28,7 @@ class SMILEStoSRSMILESTransform(TransformTemplate):
         new_batch = []
         for _, row in tqdm(batch.iterrows()):
             smiles = row[self.in_column]
-            row[self.out_column] = rxn_to_cgr(smiles, **sr_smiles_settings)
+            row[self.out_column] = rxn_to_sr(smiles, **sr_smiles_settings)
             new_batch.append(row)
         return pd.DataFrame(new_batch)
 
