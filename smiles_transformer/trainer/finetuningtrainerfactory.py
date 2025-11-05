@@ -97,6 +97,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             fp16=self.fp16,
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
+            random_state=self.random_state,
         )
 
         trainer = model_factory.create()

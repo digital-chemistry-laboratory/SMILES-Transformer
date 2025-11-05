@@ -61,7 +61,7 @@ class BaseTrainerFactory(ABC):
         checkpoint_number (int or str, optional): Specific checkpoint number to load. Defaults to None.
         save_total_limit (int, optional): Maximum number of checkpoints to save. Defaults to None.
         n_trials (int, optional): Number of trials for hyperparameter search. Defaults to None.
-        random_state (int, optional): Random state for reproducibility. Defaults to None. #TODO: implement this
+        random_state (int, optional): Random state for reproducibility. Defaults to None.
         save_dataset_path (str): Path to save the preprocessed dataset.
         load_dataset_path (str): Path to load the preprocessed dataset.
         params (dict): The entire configuration dictionary to be pushed to wandb.
