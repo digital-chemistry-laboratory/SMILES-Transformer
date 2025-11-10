@@ -55,13 +55,15 @@ class RemoveAtomMappingTransform(TransformTemplate):
         reactants_mol = Chem.MolFromSmiles(reactants)
         products_mol = Chem.MolFromSmiles(products)
 
-        def clear_atom_mapping(mol):
+        def clear_atom_mapping(mol, smi):
+            if mol is None and self.verbose:
+                print(f"smi = {smi}")
             for atom in mol.GetAtoms():
                 atom.SetAtomMapNum(0)
             return mol
 
-        reactants_mol = clear_atom_mapping(reactants_mol)
-        products_mol = clear_atom_mapping(products_mol)
+        reactants_mol = clear_atom_mapping(reactants_mol, reactants)
+        products_mol = clear_atom_mapping(products_mol, products)
 
         reactants_smiles = Chem.MolToSmiles(
             reactants_mol,
