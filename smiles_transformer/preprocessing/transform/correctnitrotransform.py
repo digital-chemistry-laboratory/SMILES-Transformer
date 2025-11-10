@@ -68,6 +68,10 @@ class CorrectNitroTransform(TransformTemplate):
                         bond = rw_mol.GetBondBetweenAtoms(
                             atom.GetIdx(), neighbor.GetIdx()
                         )
+                        # Prevent increasing bond order above triple bond
+                        if int(bond.GetBondType()) >= 3:  # Triple or greater, skip
+                            continue
+
                         rw_mol.RemoveBond(atom.GetIdx(), neighbor.GetIdx())
                         rw_mol.AddBond(
                             atom.GetIdx(),
