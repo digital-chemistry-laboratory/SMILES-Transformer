@@ -45,13 +45,16 @@ class TransformTemplate(ABC):
             pd.DataFrame: The filtered batch of data.
 
         """
+        
         if self.verbose:
             self.print_beginning_message()
         self.in_column = in_column
         self.out_column = out_column
         filtered_batch = self.step(batch)
         filtered_batch = self.remove_empty_lines(filtered_batch)
+        
         if self.verbose:
+            print(f"Removed {len(batch) - len(filtered_batch)} of {len(batch)} samples, resulting in {len(filtered_batch)} samples.")
             self.print_end_message()
 
         return filtered_batch
