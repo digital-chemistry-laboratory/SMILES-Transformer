@@ -16,26 +16,37 @@ From: python:3.10.4
     export WANDB_DATA_DIR=""
 
 %post
+    # --- 1. System Updates ---
+    apt-get update && apt-get install -y python3-pip git
 
+    # --- 2. Configure GitHub Credentials (Universal Method) ---
+    # This creates a credentials file that git uses automatically for ALL github.com repos.
+    # It replaces the manual "git config" commands.
     GITHUB_TOKEN=$(cat /root/github_token.txt)
-    git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/gSulpizio/".insteadOf "https://github.com/gSulpizio/"
-    # --- 1. System Updates (Note: These fail on the cluster, see below) ---
-    apt-get update && apt-get install -y python3-pip
+    echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" > /root/.netrc
+    chmod 600 /root/.netrc
 
-    # --- 2. Python Setup ---
+    # PREVENT HANGING: This tells git to fail immediately if it needs a password
+    # rather than pausing the build to ask for input.
+    export GIT_TERMINAL_PROMPT=0
+
+    # --- 3. Python Setup ---
     pip install --upgrade pip
-
-    # Pre-install build dependencies globally to handle CGRtools
-    # We include numpy here as it is often a build dependency for scientific tools
     pip install "Cython<3" "numpy<2" wheel setuptools
 
-    # --- 3. Install Requirements with NO BUILD ISOLATION ---
-    # This forces pip to use the Cython<3 we just installed
+    # --- 4. Install Requirements ---
+    # --no-build-isolation is crucial for CGRtools
     pip install --no-build-isolation --no-cache-dir -r /requirements.txt
 
+    # --- 5. Install Local Package ---
+    # This will now use the credentials in /root/.netrc for both 'gSulpizio' AND 'heid-lab'
     pip install .
 
-    # --- 4. Create Directories ---
+    # --- 6. Cleanup ---
+    rm /root/github_token.txt
+    rm /root/.netrc
+
+    # --- 7. Create Directories ---
     mkdir -p /data/
     mkdir -p /configurations/
     mkdir -p /outputs/
