@@ -5,6 +5,8 @@ From: python:3.10.4
     smiles_transformer/ /smiles_transformer/
     requirements.txt /requirements.txt
     setup.py /setup.py
+    /cluster/home/gsulpizio/github_token.txt /root/github_token.txt
+
 
 %environment
     export WANDB_API_KEY=""
@@ -14,6 +16,9 @@ From: python:3.10.4
     export WANDB_DATA_DIR=""
 
 %post
+
+    GITHUB_TOKEN=$(cat /root/github_token.txt)
+    git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
     # --- 1. System Updates (Note: These fail on the cluster, see below) ---
     apt-get update && apt-get install -y python3-pip
 
