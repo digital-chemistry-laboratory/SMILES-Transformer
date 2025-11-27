@@ -460,7 +460,7 @@ def check_parameters(params):
     return
 
 
-def predict(path_to_config_folder, write_path, alternative_config={}):
+def predict(path_to_config_folder, write_path, alternative_config=None):
     """
     Main function of the project. Loads the dataset, the vocabulary, and trains the model.
 
@@ -485,6 +485,8 @@ def predict(path_to_config_folder, write_path, alternative_config={}):
     if params["general_settings"]["verbose"]:
         print("Config Loaded")
     params["general_settings"].update({"test_mode": False})
+    if alternative_config is None:
+        alternative_config = {}
     for category in alternative_config:
         params[category].update(alternative_config[category])
 

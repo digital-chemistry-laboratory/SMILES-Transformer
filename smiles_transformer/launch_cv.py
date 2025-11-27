@@ -6,7 +6,7 @@ import numpy as np
 import wandb
 
 
-def launch_cv(path_to_config_folder, alternative_config={}):
+def launch_cv(path_to_config_folder, alternative_config=None):
     # Call the main function with these parameters
     with open(
         path_finder(
@@ -17,6 +17,8 @@ def launch_cv(path_to_config_folder, alternative_config={}):
         "r",
     ) as stream:
         params = yaml.safe_load(stream)
+    if alternative_config is None:
+        alternative_config = {}
     for category in alternative_config:
         params[category].update(alternative_config[category])
     n_folds = params["test_settings"]["n_folds"]

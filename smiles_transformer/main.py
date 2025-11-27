@@ -327,7 +327,7 @@ def preprocess(params):
 
 
 def seed_everything(seed=42):
-    os.environ['PYTHONHASHSEED'] = '42'
+    os.environ['PYTHONHASHSEED'] = str(seed)
     os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
     import torch
     random.seed(seed)
@@ -573,7 +573,7 @@ def check_parameters(params):
     return
 
 
-def main(path_to_config_folder, alternative_config={}):
+def main(path_to_config_folder, alternative_config=None):
     """
     Main function of the project. Loads the dataset, the vocabulary, and trains the model.
 
@@ -598,6 +598,8 @@ def main(path_to_config_folder, alternative_config={}):
     if params["general_settings"]["verbose"]:
         print("Config Loaded")
 
+    if alternative_config is None:
+        alternative_config = {}
     for category in alternative_config:
         params[category].update(alternative_config[category])
     seed_everything(params["general_settings"]["random_state"])
