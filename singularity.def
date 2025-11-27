@@ -18,7 +18,7 @@ From: python:3.10.4
 %post
 
     GITHUB_TOKEN=$(cat /root/github_token.txt)
-    git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+    git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/gSulpizio/".insteadOf "https://github.com/gSulpizio/"
     # --- 1. System Updates (Note: These fail on the cluster, see below) ---
     apt-get update && apt-get install -y python3-pip
 
