@@ -13,26 +13,32 @@ From: python:3.10.4
     export WANDB_CACHE_DIR=""
     export WANDB_DATA_DIR=""
 
-
 %post
-    # Install necessary packages
+    # --- 1. System Updates (Note: These fail on the cluster, see below) ---
     apt-get update && apt-get install -y python3-pip
+
+    # --- 2. Python Setup ---
     pip install --upgrade pip
-    pip install "Cython<3" wheel setuptools
-    pip install --no-cache-dir -r /requirements.txt
+
+    # Pre-install build dependencies globally to handle CGRtools
+    # We include numpy here as it is often a build dependency for scientific tools
+    pip install "Cython<3" "numpy<2" wheel setuptools
+
+    # --- 3. Install Requirements with NO BUILD ISOLATION ---
+    # This forces pip to use the Cython<3 we just installed
+    pip install --no-build-isolation --no-cache-dir -r /requirements.txt
+
     pip install .
 
-    # Create necessary directories
+    # --- 4. Create Directories ---
     mkdir -p /data/
     mkdir -p /configurations/
     mkdir -p /outputs/
 
 %runscript
-    # Check if any arguments are provided
     if [ -z "$*" ]; then
         echo "No arguments provided. Please specify a Python module or script to run."
         exit 1
     else
-        # Run the specified Python module/script with the provided arguments
         exec python -m $*
     fi
