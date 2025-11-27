@@ -602,7 +602,8 @@ def main(path_to_config_folder, alternative_config=None):
         alternative_config = {}
     for category in alternative_config:
         params[category].update(alternative_config[category])
-    seed_everything(params["general_settings"]["random_state"])
+    if params["general_settings"]["random_state"] is not None:
+        seed_everything(params["general_settings"]["random_state"])
     (
         X,
         vocab,

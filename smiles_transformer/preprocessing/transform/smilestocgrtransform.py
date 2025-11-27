@@ -23,12 +23,12 @@ def kekulize_reaction(smiles: str) -> str:
     reactants_kek = Chem.MolToSmiles(
         reactants_mol,
         kekuleSmiles=True,
-        canonical=canonical,
+        #canonical=False,
     )
     products_kek = Chem.MolToSmiles(
         products_mol,
         kekuleSmiles=True,
-        canonical=canonical,
+        #canonical=False,
     )
 
     return f"{reactants_kek}>>{products_kek}"
