@@ -455,6 +455,15 @@ def train(
     model = trainer.create(dataset=X)
     if params["general_settings"]["verbose"]:
         print("Model trained. Evaluating model if in finetuning mode.")
+
+    os.makedirs(os.path.dirname(os.path.join(
+            params["general_settings"]["path_to_outputs"],
+            params["training_settings"]["model_mode"],
+            params["training_settings"]["model_type"],
+            params["training_settings"]["model_size"],
+            params["general_settings"]["tokenizer_kind"],
+            "overall_config.json",
+        )), exist_ok=True)
     with open(
         os.path.join(
             params["general_settings"]["path_to_outputs"],
