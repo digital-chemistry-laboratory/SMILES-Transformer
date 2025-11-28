@@ -97,6 +97,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             fp16=self.fp16,
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
+            max_grad_norm=self.max_grad_norm,
             random_state=self.random_state,
         )
 

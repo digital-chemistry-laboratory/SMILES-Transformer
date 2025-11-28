@@ -133,6 +133,11 @@ training_settings:
   # Maximum number of checkpoints saved. older checkpoints are removed. Disable this with null
   save_total_limit: 3
 
+  # Maximum gradient norm for gradient clipping to prevent exploding gradients
+  # Lower values (e.g., 0.5) provide stronger clipping, higher values (e.g., 5.0) are more permissive
+  # Default: 1.0
+  max_grad_norm: 1.0
+
 
 # ------------------------------------------
 # ---- DATASET SETTINGS -------------------
