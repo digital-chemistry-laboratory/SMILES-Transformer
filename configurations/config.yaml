@@ -133,43 +133,10 @@ training_settings:
   # Maximum number of checkpoints saved. older checkpoints are removed. Disable this with null
   save_total_limit: 3
 
-  # ------------------------------------------
-  # ---- REGULARIZATION & OPTIMIZATION ------
-  # ------------------------------------------
-
-  # Weight decay for AdamW optimizer (L2 regularization)
-  weight_decay: 0.01
-
-  # Gradient clipping: maximum gradient norm. null to disable
+  # Maximum gradient norm for gradient clipping to prevent exploding gradients
+  # Lower values (e.g., 0.5) provide stronger clipping, higher values (e.g., 5.0) are more permissive
+  # Default: 1.0
   max_grad_norm: 1.0
-
-  # Label smoothing for classification tasks (0.0 to disable)
-  label_smoothing: 0.0
-
-  # ------------------------------------------
-  # ---- FROZEN ENCODER SETTINGS ------------
-  # ------------------------------------------
-
-  # For finetuning: freeze encoder initially and unfreeze after N steps
-  # Set to null to train all layers from the start
-  freeze_encoder_steps: null
-
-  # Gradually unfreeze layers from top to bottom
-  # If True, unfreezes one layer at a time over the freeze period
-  # If False, unfreezes all layers at once after freeze_encoder_steps
-  gradual_unfreezing: False
-
-  # ------------------------------------------
-  # ---- ADVANCED REGULARIZATION ------------
-  # ------------------------------------------
-
-  # LayerDrop: probability of dropping entire layers during training
-  # Helps with regularization and faster inference. null to disable
-  layerdrop_prob: null
-
-  # Stochastic Depth: probability of dropping residual connections
-  # Helps prevent overfitting in deep networks. null to disable
-  stochastic_depth_prob: null
 
 
 # ------------------------------------------

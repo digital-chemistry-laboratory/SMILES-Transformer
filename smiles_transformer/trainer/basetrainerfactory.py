@@ -146,6 +146,7 @@ class BaseTrainerFactory(ABC):
         logging_steps=10,
         checkpoint_number=None,
         save_total_limit=None,
+        max_grad_norm=1.0,
         n_trials=None,
         random_state=None,
         save_dataset_path=None,
@@ -201,6 +202,7 @@ class BaseTrainerFactory(ABC):
         self.logging_steps = logging_steps
         self.checkpoint_number = checkpoint_number
         self.save_total_limit = save_total_limit
+        self.max_grad_norm = max_grad_norm
         self.n_trials = n_trials
         self.random_state = random_state
         self.save_dataset_path = save_dataset_path
