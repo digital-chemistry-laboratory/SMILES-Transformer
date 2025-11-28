@@ -152,6 +152,13 @@ class BaseTrainerFactory(ABC):
         load_dataset_path=None,
         params={},
         skip_training=False,
+        weight_decay=0.0,
+        max_grad_norm=1.0,
+        label_smoothing=0.0,
+        freeze_encoder_steps=None,
+        gradual_unfreezing=False,
+        layerdrop_prob=None,
+        stochastic_depth_prob=None,
         *args,
         **kwargs,
     ):
@@ -200,6 +207,13 @@ class BaseTrainerFactory(ABC):
         self.load_dataset_path = load_dataset_path
         self.params = params
         self.skip_training=skip_training
+        self.weight_decay = weight_decay
+        self.max_grad_norm = max_grad_norm
+        self.label_smoothing = label_smoothing
+        self.freeze_encoder_steps = freeze_encoder_steps
+        self.gradual_unfreezing = gradual_unfreezing
+        self.layerdrop_prob = layerdrop_prob
+        self.stochastic_depth_prob = stochastic_depth_prob
 
         self.run = wandb.init(
             project="Smiles_CGR_transformer",

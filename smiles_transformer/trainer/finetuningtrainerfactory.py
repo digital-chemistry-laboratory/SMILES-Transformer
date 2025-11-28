@@ -98,6 +98,13 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
             random_state=self.random_state,
+            weight_decay=self.weight_decay,
+            max_grad_norm=self.max_grad_norm,
+            label_smoothing=self.label_smoothing,
+            freeze_encoder_steps=self.freeze_encoder_steps,
+            gradual_unfreezing=self.gradual_unfreezing,
+            layerdrop_prob=self.layerdrop_prob,
+            stochastic_depth_prob=self.stochastic_depth_prob,
         )
 
         trainer = model_factory.create()

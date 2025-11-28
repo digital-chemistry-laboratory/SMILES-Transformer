@@ -428,7 +428,14 @@ def train(
         save_dataset_path=params["dataset_settings"]["save_dataset_path"],
         load_dataset_path=params["dataset_settings"]["load_dataset_path"],
         params=params,
-        skip_training=True
+        skip_training=True,
+        weight_decay=params["training_settings"].get("weight_decay", 0.0),
+        max_grad_norm=params["training_settings"].get("max_grad_norm", 1.0),
+        label_smoothing=params["training_settings"].get("label_smoothing", 0.0),
+        freeze_encoder_steps=params["training_settings"].get("freeze_encoder_steps", None),
+        gradual_unfreezing=params["training_settings"].get("gradual_unfreezing", False),
+        layerdrop_prob=params["training_settings"].get("layerdrop_prob", None),
+        stochastic_depth_prob=params["training_settings"].get("stochastic_depth_prob", None),
     )
     if params["general_settings"]["verbose"]:
         print("Trainer initialized. Training model.")
