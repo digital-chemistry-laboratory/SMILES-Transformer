@@ -565,10 +565,10 @@ def check_parameters(params):
             params["training_settings"]["run_name"] is not None
         ), "if the model is not pretraining, a run name must be provided in the configuration file."
     # vocab_path = path_finder(prefix=params["vocabulary_settings"]["path_to_vocab_folder"],path_from_source=f"vocab_{params['general_settings']['tokenizer_kind']}.txt",is_file=True,)
-
-    assert os.path.exists(
-        params["vocabulary_settings"]["path_to_vocab_folder"]
-    ), f"Vocabulary file not found at {params['vocabulary_settings']['path_to_vocab_folder']}.Verify that the path is correct, and that the file exists!"
+    if params["vocabulary_settings"]["generate_vocab"] is not True:
+        assert os.path.exists(
+            params["vocabulary_settings"]["path_to_vocab_folder"]
+        ), f"Vocabulary file not found at {params['vocabulary_settings']['path_to_vocab_folder']}.Verify that the path is correct, and that the file exists!"
 
     return
 
