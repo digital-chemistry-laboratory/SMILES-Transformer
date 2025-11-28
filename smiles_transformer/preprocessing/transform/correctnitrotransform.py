@@ -48,14 +48,17 @@ class CorrectNitroTransform(TransformTemplate):
         fixed_products = []
         fixed_reactants_str = []
         fixed_products_str = []
-        for i, reactant in enumerate(reactants):
-            fixed_reactants.append(self.fix_mol(Chem.MolFromSmiles(reactant)))
-            fixed_reactants_str.append(
-                Chem.MolToSmiles(fixed_reactants[i]).split(".")[0]
-            )
-        for i, product in enumerate(products):
-            fixed_products.append(self.fix_mol(Chem.MolFromSmiles(product)))
-            fixed_products_str.append(Chem.MolToSmiles(fixed_products[i]).split(".")[0])
+        try:
+            for i, reactant in enumerate(reactants):
+                fixed_reactants.append(self.fix_mol(Chem.MolFromSmiles(reactant)))
+                fixed_reactants_str.append(
+                    Chem.MolToSmiles(fixed_reactants[i]).split(".")[0]
+                )
+            for i, product in enumerate(products):
+                fixed_products.append(self.fix_mol(Chem.MolFromSmiles(product)))
+                fixed_products_str.append(Chem.MolToSmiles(fixed_products[i]).split(".")[0])
+        except:
+            return ""
 
         return f"{'.'.join(fixed_reactants_str)}>>{'.'.join(fixed_products_str)}"
 
