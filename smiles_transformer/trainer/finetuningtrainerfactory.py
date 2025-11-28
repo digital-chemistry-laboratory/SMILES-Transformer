@@ -128,7 +128,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
 
         self.pretrained_model_path = path_finder(
             prefix=self.path_to_outputs,
-            path_from_source=f"/{"finetuning" if self.skip_training else "pretraining"}/{self.model_type}/{self.model_size}/{self.tokenizer_kind}/{self.run_name}",
+            path_from_source=f'/{"finetuning" if self.skip_training else "pretraining"}/{self.model_type}/{self.model_size}/{self.tokenizer_kind}/{self.run_name}',
             is_file=False,
         )
 
