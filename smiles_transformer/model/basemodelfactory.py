@@ -39,6 +39,7 @@ class BaseModelFactory(ABC):
         logging_steps (int): Frequency of logging training progress.
         save_total_limit (int): Maximum number of saved checkpoints.
         max_grad_norm (float): Maximum gradient norm for gradient clipping. Defaults to 1.0.
+        weight_decay (float): Weight decay coefficient for L2 regularization. Defaults to 0.0.
         output_dir (str): Directory for saving model outputs and checkpoints.
         smilestokenizer: Smiles tokenizer used for processing the input data. This needs to be an instance of the SmilesTokenizer class.
         init_before_create_error (str): Error message for incorrect initialization sequence.
@@ -83,6 +84,7 @@ class BaseModelFactory(ABC):
         logging_steps=10,
         save_total_limit=None,
         max_grad_norm=1.0,
+        weight_decay=0.0,
         random_state=None,
         weight_decay=0.0,
         max_grad_norm=1.0,
@@ -117,6 +119,7 @@ class BaseModelFactory(ABC):
         self.logging_steps = logging_steps
         self.save_total_limit = save_total_limit
         self.max_grad_norm = max_grad_norm
+        self.weight_decay = weight_decay
         self.output_dir = output_dir
         self.smilestokenizer = smilestokenizer
         self.random_state = random_state

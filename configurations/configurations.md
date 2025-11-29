@@ -302,72 +302,23 @@ The maximum number of checkpoints to keep. Older checkpoints are automatically d
 - **Default**: `3`
 - **Behavior**: Set to `null` to disable this limit and keep all checkpoints.
 
-### Regularization & Optimization
+**max_grad_norm**
+The maximum gradient norm for gradient clipping to prevent exploding gradients during training.
+
+- **Type**: `float`
+- **Default**: `1.0`
+- **Behavior**: Lower values (e.g., `0.5`) provide stronger clipping, higher values (e.g., `5.0`) are more permissive.
 
 **weight_decay**
-L2 regularization strength for the AdamW optimizer. Helps prevent overfitting by penalizing large weights.
+The weight decay coefficient for L2 regularization applied to model weights.
 
 - **Type**: `float`
-- **Default**: `0.01`
-- **Recommended Range**: `0.0` (no weight decay) to `0.1`
-- **Notes**: Higher values provide stronger regularization but may hurt performance if too high.
-
-**max_grad_norm**
-Maximum gradient norm for gradient clipping. Prevents exploding gradients during training.
-
-- **Type**: `float` or `null`
-- **Default**: `1.0`
-- **Behavior**: Set to `null` to disable gradient clipping.
-- **Notes**: Values between `0.5` and `5.0` are common. Lower values provide more aggressive clipping.
-
-**label_smoothing**
-Label smoothing factor for classification tasks. Softens hard labels to prevent overconfidence.
-
-- **Type**: `float`
-- **Default**: `0.0` (disabled)
-- **Range**: `0.0` to `1.0`
-- **Recommended**: `0.1` for classification tasks to improve generalization
-- **Notes**: Only applies to classification. Has no effect on regression tasks.
-
-### Frozen Encoder Settings
-
-**freeze_encoder_steps**
-Number of training steps to keep the encoder frozen before unfreezing. Useful for fine-tuning when you want to train only the classification head initially.
-
-- **Type**: `integer` or `null`
-- **Default**: `null` (train all layers from the start)
-- **Recommended**: `100`-`500` steps for small datasets, `500`-`2000` for larger datasets
-- **Notes**: Only applies to fine-tuning. Helps prevent catastrophic forgetting of pre-trained weights.
-
-**gradual_unfreezing**
-Whether to gradually unfreeze encoder layers one at a time, or unfreeze all at once.
-
-- **Type**: `boolean`
-- **Default**: `False`
-- **Options**:
-  - `True`: Unfreezes layers progressively from top (closest to output) to bottom (closest to input)
-  - `False`: Unfreezes all layers at once after `freeze_encoder_steps`
-- **Notes**: Gradual unfreezing can lead to better performance but takes longer to reach full model capacity.
-
-### Advanced Regularization
-
-**layerdrop_prob**
-Probability of dropping entire transformer layers during training (LayerDrop). Improves regularization and can speed up inference.
-
-- **Type**: `float` or `null`
-- **Default**: `null` (disabled)
-- **Range**: `0.0` to `0.5`
-- **Recommended**: `0.1` to `0.2` for models with many layers
-- **Notes**: Only supported by certain model architectures. Check model documentation.
-
-**stochastic_depth_prob**
-Probability of dropping residual connections in transformer layers (Stochastic Depth). Helps prevent overfitting in deep networks.
-
-- **Type**: `float` or `null`
-- **Default**: `null` (disabled)
-- **Range**: `0.0` to `0.5`
-- **Recommended**: `0.1` to `0.3`
-- **Notes**: Requires custom model implementation. Currently shows a warning if used.
+- **Default**: `0.0`
+- **Behavior**:
+    - `0.0`: No weight decay (no regularization)
+    - `0.01`: Light regularization (common default for fine-tuning)
+    - `0.1`: Moderate regularization
+    - Higher values increase the penalty on large weights, helping to prevent overfitting
 
 ---
 

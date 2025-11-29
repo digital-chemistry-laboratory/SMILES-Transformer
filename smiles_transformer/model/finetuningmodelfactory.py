@@ -174,6 +174,7 @@ class FinetuningModelFactory(BaseModelFactory):
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
             max_grad_norm=self.max_grad_norm,
+            weight_decay=self.weight_decay,
             seed=self.random_state if self.random_state is not None else 42,
             weight_decay=self.weight_decay,
             max_grad_norm=self.max_grad_norm,
