@@ -203,7 +203,11 @@ class FinetuningModelFactory(BaseModelFactory):
             compute_metrics = compute_metrics_for_classification
         else:
             compute_metrics = compute_metrics_for_regression
-        
+        print(f"Final length of training dataset: {len(self.dataset['train'])}")
+        if "eval" in self.dataset:
+            print(f"Final length of eval dataset: {len(self.dataset['eval'])}")
+        if "test" in self.dataset:
+            print(f"Final length of test dataset: {len(self.dataset['test'])}")
         return Trainer(
             model=self.init_model(),
             train_dataset=self.dataset["train"],
