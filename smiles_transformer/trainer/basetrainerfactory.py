@@ -60,6 +60,8 @@ class BaseTrainerFactory(ABC):
         logging_steps (int): Number of steps between logging.
         checkpoint_number (int or str, optional): Specific checkpoint number to load. Defaults to None.
         save_total_limit (int, optional): Maximum number of checkpoints to save. Defaults to None.
+        max_grad_norm (float): Maximum gradient norm for gradient clipping. Defaults to 1.0.
+        weight_decay (float): Weight decay coefficient for L2 regularization. Defaults to 0.0.
         n_trials (int, optional): Number of trials for hyperparameter search. Defaults to None.
         random_state (int, optional): Random state for reproducibility. Defaults to None.
         save_dataset_path (str): Path to save the preprocessed dataset.
@@ -147,6 +149,7 @@ class BaseTrainerFactory(ABC):
         checkpoint_number=None,
         save_total_limit=None,
         max_grad_norm=1.0,
+        weight_decay=0.0,
         n_trials=None,
         random_state=None,
         save_dataset_path=None,
@@ -196,6 +199,7 @@ class BaseTrainerFactory(ABC):
         self.checkpoint_number = checkpoint_number
         self.save_total_limit = save_total_limit
         self.max_grad_norm = max_grad_norm
+        self.weight_decay = weight_decay
         self.n_trials = n_trials
         self.random_state = random_state
         self.save_dataset_path = save_dataset_path

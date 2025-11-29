@@ -424,6 +424,7 @@ def train(
         checkpoint_number=params["training_settings"]["checkpoint_number"],
         save_total_limit=params["training_settings"]["save_total_limit"],
         max_grad_norm=params["training_settings"].get("max_grad_norm", 1.0),
+        weight_decay=params["training_settings"].get("weight_decay", 0.0),
         n_trials=None,  # params["training_settings"]["n_trials"],
         random_state=params["general_settings"]["random_state"],
         save_dataset_path=params["dataset_settings"]["save_dataset_path"],
