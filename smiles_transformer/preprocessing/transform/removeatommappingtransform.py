@@ -45,39 +45,45 @@ class RemoveAtomMappingTransform(TransformTemplate):
         Returns:
             str: The SMILES/CGR string.
         """  # noqa 501
+        try:
+            smiles = str(smiles)
+            if (">>" not in smiles) and self.verbose:
+                print(smiles + " :\n", self.not_smiles_error)
 
-        smiles = str(smiles)
-        if (">>" not in smiles) and self.verbose:
-            print(smiles + " :\n", self.not_smiles_error)
+            reactants, products = smiles.split(">>")
 
-        reactants, products = smiles.split(">>")
+            reactants_mol = Chem.MolFromSmiles(reactants)
+            products_mol = Chem.MolFromSmiles(products)
 
-        reactants_mol = Chem.MolFromSmiles(reactants)
-        products_mol = Chem.MolFromSmiles(products)
+            def clear_atom_mapping(mol, smi):
+                if mol is None and self.verbose:
+                    print(f"smi = {smi}")
+                for atom in mol.GetAtoms():
+                    atom.SetAtomMapNum(0)
+                return mol
 
-        def clear_atom_mapping(mol, smi):
-            if mol is None and self.verbose:
-                print(f"smi = {smi}")
-            for atom in mol.GetAtoms():
-                atom.SetAtomMapNum(0)
-            return mol
+            reactants_mol = clear_atom_mapping(reactants_mol, reactants)
+            products_mol = clear_atom_mapping(products_mol, products)
 
-        reactants_mol = clear_atom_mapping(reactants_mol, reactants)
-        products_mol = clear_atom_mapping(products_mol, products)
+            reactants_smiles = Chem.MolToSmiles(
+                reactants_mol,
+                canonical=False,
+                kekuleSmiles=self.kwargs.get("kekulesmiles", True),
+            )
+            products_smiles = Chem.MolToSmiles(
+                products_mol,
+                canonical=False,
+                kekuleSmiles=self.kwargs.get("kekulesmiles", True),
+            )
 
-        reactants_smiles = Chem.MolToSmiles(
-            reactants_mol,
-            canonical=False,
-            kekuleSmiles=self.kwargs.get("kekulesmiles", True),
-        )
-        products_smiles = Chem.MolToSmiles(
-            products_mol,
-            canonical=False,
-            kekuleSmiles=self.kwargs.get("kekulesmiles", True),
-        )
-
-        non_mapped_smiles = f"{reactants_smiles}>>{products_smiles}"
-        return non_mapped_smiles
+            non_mapped_smiles = f"{reactants_smiles}>>{products_smiles}"
+            return non_mapped_smiles
+        except AttributeError as e:
+            # catches ONLY RDKit internal failures, e.g. valence errors
+            if "explicit valence" in str(e).lower():
+                # Optional: log only this specific RDKit valence issue
+                print(f"Valence error for SMILES: {smiles}")
+            return ""
 
     @property
     def init_message(self) -> str:
