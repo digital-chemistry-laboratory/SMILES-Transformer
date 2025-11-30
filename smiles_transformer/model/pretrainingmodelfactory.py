@@ -56,6 +56,8 @@ class PretrainingModelFactory(BaseModelFactory):
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
             seed=self.random_state if self.random_state is not None else 42,
+            weight_decay=self.weight_decay,
+            max_grad_norm=self.max_grad_norm,
         )
         self.bert_config = BertConfig(
             vocab_size=self.smilestokenizer.vocab_size, **self.model_config

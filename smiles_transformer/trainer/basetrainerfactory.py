@@ -152,6 +152,8 @@ class BaseTrainerFactory(ABC):
         load_dataset_path=None,
         params={},
         skip_training=False,
+        weight_decay=0.01,
+        max_grad_norm=1.0,
         *args,
         **kwargs,
     ):
@@ -200,6 +202,8 @@ class BaseTrainerFactory(ABC):
         self.load_dataset_path = load_dataset_path
         self.params = params
         self.skip_training=skip_training
+        self.weight_decay = weight_decay
+        self.max_grad_norm = max_grad_norm
 
         self.run = wandb.init(
             project="Smiles_CGR_transformer",

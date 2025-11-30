@@ -82,6 +82,8 @@ class BaseModelFactory(ABC):
         logging_steps=10,
         save_total_limit=None,
         random_state=None,
+        weight_decay=0.01,
+        max_grad_norm=1.0,
     ):
         self.model_type = model_type
         self.dataset = dataset
@@ -110,6 +112,8 @@ class BaseModelFactory(ABC):
         self.output_dir = output_dir
         self.smilestokenizer = smilestokenizer
         self.random_state = random_state
+        self.weight_decay = weight_decay
+        self.max_grad_norm = max_grad_norm
         assert self.smilestokenizer is not None, self.no_tokenizer_error
 
         # assert isinstance(self.smilestokenizer, BaseTokenizerTemplate), self.tokenizer_not_instance

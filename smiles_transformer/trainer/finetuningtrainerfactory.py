@@ -98,6 +98,8 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
             random_state=self.random_state,
+            weight_decay=self.weight_decay,
+            max_grad_norm=self.max_grad_norm,
         )
 
         trainer = model_factory.create()
