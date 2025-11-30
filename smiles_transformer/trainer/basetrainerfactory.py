@@ -148,8 +148,6 @@ class BaseTrainerFactory(ABC):
         logging_steps=10,
         checkpoint_number=None,
         save_total_limit=None,
-        max_grad_norm=1.0,
-        weight_decay=0.0,
         n_trials=None,
         random_state=None,
         save_dataset_path=None,
@@ -213,8 +211,6 @@ class BaseTrainerFactory(ABC):
         self.load_dataset_path = load_dataset_path
         self.params = params
         self.skip_training=skip_training
-        self.weight_decay = weight_decay
-        self.max_grad_norm = max_grad_norm
         self.label_smoothing = label_smoothing
         self.freeze_encoder_steps = freeze_encoder_steps
         self.gradual_unfreezing = gradual_unfreezing

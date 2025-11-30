@@ -83,8 +83,6 @@ class BaseModelFactory(ABC):
         fp16=False,
         logging_steps=10,
         save_total_limit=None,
-        max_grad_norm=1.0,
-        weight_decay=0.0,
         random_state=None,
         weight_decay=0.0,
         max_grad_norm=1.0,
@@ -118,8 +116,6 @@ class BaseModelFactory(ABC):
         self.fp16 = fp16
         self.logging_steps = logging_steps
         self.save_total_limit = save_total_limit
-        self.max_grad_norm = max_grad_norm
-        self.weight_decay = weight_decay
         self.output_dir = output_dir
         self.smilestokenizer = smilestokenizer
         self.random_state = random_state

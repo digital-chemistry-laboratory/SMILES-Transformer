@@ -100,8 +100,6 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             max_grad_norm=self.max_grad_norm,
             weight_decay=self.weight_decay,
             random_state=self.random_state,
-            weight_decay=self.weight_decay,
-            max_grad_norm=self.max_grad_norm,
             label_smoothing=self.label_smoothing,
             freeze_encoder_steps=self.freeze_encoder_steps,
             gradual_unfreezing=self.gradual_unfreezing,

@@ -176,8 +176,6 @@ class FinetuningModelFactory(BaseModelFactory):
             max_grad_norm=self.max_grad_norm,
             weight_decay=self.weight_decay,
             seed=self.random_state if self.random_state is not None else 42,
-            weight_decay=self.weight_decay,
-            max_grad_norm=self.max_grad_norm,
             label_smoothing_factor=self.label_smoothing,
         )
 
