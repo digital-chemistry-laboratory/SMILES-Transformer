@@ -178,7 +178,8 @@ class FinetuningModelFactory(BaseModelFactory):
             seed=self.random_state if self.random_state is not None else 42,
             label_smoothing_factor=self.label_smoothing,
         )
-
+        print("Final training arguments recieved:")
+        print(training_args.to_json_string())
         callbacks = []
         if self.early_stopping_patience is not None:
             callbacks.append(
