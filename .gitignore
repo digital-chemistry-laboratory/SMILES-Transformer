@@ -1,3 +1,6 @@
+
+slurm/output
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,4 +130,5 @@ models/*
 **/events.out.tfevents.*
 
 **/smiles-cgr-transformers.tar
+**/SMILES-Transformer.tar
 notebooks/lightning_logs/
