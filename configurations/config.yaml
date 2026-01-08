@@ -74,6 +74,9 @@ training_settings:
 
   learning_rate: 0.0002
 
+  # Learning rate scheduler type (Hugging Face Trainer). Common options: linear, cosine, cosine_with_restarts, polynomial, constant, constant_with_warmup.
+  lr_scheduler_type: linear
+
   # Probability of hidden dropout
   hidden_dropout: 0.4
 

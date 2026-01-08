@@ -28,6 +28,7 @@ class BaseModelFactory(ABC):
         model_size (str): Size of the model (e.g., 'small', 'medium', 'large').
         hidden_dropout (float): Dropout rate for hidden layers in the model.
         warmup_ratio (float): Warmup ratio for learning rate scheduling.
+        lr_scheduler_type (str): Learning rate scheduler type for Trainer.
         additional_features (dict): Additional features to be added to the model.
         layer_width (int): Width of the hidden layers in the model.
         n_layers (int): Number of hidden layers in the model.
@@ -73,6 +74,7 @@ class BaseModelFactory(ABC):
         model_size="small",
         hidden_dropout=0.1,
         warmup_ratio=0.03,
+        lr_scheduler_type="linear",
         additional_features=[],
         layer_width=2400,
         n_layers=3,
@@ -106,6 +108,7 @@ class BaseModelFactory(ABC):
         self.model_size = model_size
         self.hidden_dropout = hidden_dropout
         self.warmup_ratio = warmup_ratio
+        self.lr_scheduler_type = lr_scheduler_type
         self.additional_features = additional_features
         self.layer_width = layer_width
         self.n_layers = n_layers

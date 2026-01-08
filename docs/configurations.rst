@@ -144,6 +144,11 @@ All hyperparameters and settings related to the model architecture and training 
   The initial learning rate for AdamW optimizer.
   - **Type**: ``float``
 
+**lr_scheduler_type**
+  Learning rate scheduler type used by the Hugging Face Trainer.
+  - **Type**: ``string``
+  - **Options**: ``linear``, ``cosine``, ``cosine_with_restarts``, ``polynomial``, ``constant``, ``constant_with_warmup``
+
 **hidden_dropout**
   The dropout probability for all fully connected layers in the model.
   - **Type**: ``float``

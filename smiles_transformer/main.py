@@ -436,6 +436,7 @@ def train(
         auto_find_batch_size=params["training_settings"]["auto_find_batch_size"],
         fp16=params["training_settings"]["fp16"],
         warmup_ratio=params["training_settings"]["warmup_ratio"],
+        lr_scheduler_type=params["training_settings"].get("lr_scheduler_type", "linear"),
         additional_features=params["dataset_settings"]["additional_features"] or [],
         n_layers=params["training_settings"]["n_layers"],
         n_labels=n_labels,

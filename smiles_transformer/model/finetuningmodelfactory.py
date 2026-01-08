@@ -168,6 +168,7 @@ class FinetuningModelFactory(BaseModelFactory):
             gradient_accumulation_steps=self.gradient_accumulation_steps,
             fp16=self.fp16,
             warmup_ratio=self.warmup_ratio,
+            lr_scheduler_type=self.lr_scheduler_type,
             load_best_model_at_end=True,
             metric_for_best_model="eval_loss",
             greater_is_better=False,

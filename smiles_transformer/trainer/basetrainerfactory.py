@@ -53,6 +53,7 @@ class BaseTrainerFactory(ABC):
         auto_find_batch_size (bool): Whether to automatically find the optimal batch size.
         fp16 (bool): Whether to use 16-bit (mixed) precision training.
         warmup_ratio (float): Warmup ratio for learning rate scheduler.
+        lr_scheduler_type (str): Learning rate scheduler type for Trainer.
         additional_features (list): List of additional features to include.
         n_layers (int): Number of layers in the model.
         n_labels (int): Number of labels in the dataset.
@@ -141,6 +142,7 @@ class BaseTrainerFactory(ABC):
         auto_find_batch_size=True,
         fp16=False,
         warmup_ratio=0.03,
+        lr_scheduler_type="linear",
         additional_features=[],
         n_layers=3,
         n_labels=1,
@@ -196,6 +198,7 @@ class BaseTrainerFactory(ABC):
         self.auto_find_batch_size = auto_find_batch_size
         self.fp16 = fp16
         self.warmup_ratio = warmup_ratio
+        self.lr_scheduler_type = lr_scheduler_type
         self.additional_features = additional_features
         self.n_layers = n_layers
         self.n_labels = n_labels
