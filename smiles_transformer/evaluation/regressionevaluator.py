@@ -46,8 +46,15 @@ class RegressionEvaluator(EvaluatorTemplate):
             ),
         }
         print("result metrics:", result_metrics)
-        self.wandb_run.summary.update(result_metrics)
-        self.wandb_run.log(result_metrics, commit=True)
+        
+        # Log metrics to W&B with error handling
+        try:
+            self.wandb_run.summary.update(result_metrics)
+            self.wandb_run.log(result_metrics, commit=True)
+        except Exception as e:
+            print(f"Warning: Failed to log metrics to W&B: {e}")
+            print("Continuing without W&B logging. Metrics are still computed and returned.")
+        
         return result_metrics
 
     def save_output(self, X_test, yield_predicted, yield_true):
@@ -75,8 +82,14 @@ class RegressionEvaluator(EvaluatorTemplate):
 
         data_table["original_smiles"] = X_test["original_input"].to_numpy()
         data_table.to_csv(os.path.join(base_path, "results.csv"))
-        samples = wandb.Table(dataframe=data_table)
-        self.wandb_run.log({"Samples": samples})
+        
+        # Log to W&B with error handling to prevent crashes on network timeouts
+        try:
+            samples = wandb.Table(dataframe=data_table)
+            self.wandb_run.log({"Samples": samples})
+        except Exception as e:
+            print(f"Warning: Failed to log samples to W&B: {e}")
+            print("Continuing without W&B logging. Results are still saved to results.csv")
         plt.scatter(yield_true, yield_predicted)
         plt.xlabel("True label")
         plt.ylabel("Predicted label")
