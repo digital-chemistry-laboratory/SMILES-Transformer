@@ -163,6 +163,8 @@ class BaseTrainerFactory(ABC):
         gradual_unfreezing=False,
         layerdrop_prob=None,
         stochastic_depth_prob=None,
+        wandb_group_name=None,
+        wandb_run_name=None,
         *args,
         **kwargs,
     ):
@@ -225,6 +227,8 @@ class BaseTrainerFactory(ABC):
             mode="disabled" if self.test_mode else "online",
             reinit=False,
             config=params,
+            group=wandb_group_name,
+            name=wandb_run_name,
         )
 
         self.define_tokenizer(smilestokenizer)
@@ -261,7 +265,7 @@ class BaseTrainerFactory(ABC):
         )
         if params:
             print("-----------------------------------------")
-            print("RECIEVED PARAMETERS:")
+            print("RECEIVED PARAMETERS:")
             print(json.dumps(params, indent=4))
             print("-----------------------------------------")
 
