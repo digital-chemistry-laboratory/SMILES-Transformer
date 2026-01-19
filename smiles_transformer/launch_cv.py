@@ -140,16 +140,10 @@ if __name__ == "__main__":
         type=str,
         help='JSON string to override config. Example: \'{"training_settings": {"learning_rate": 1e-5}}\''
     )
-    parser.add_argument(
-        "--summary_file",
-        type=str,
-        default=None,
-        help="Optional path to a file to save the summary output."
-    )
 
     args = parser.parse_args()
     
     alternative_config = json.loads(args.override) if args.override else {}
     
-    launch_cv(args.config_folder, alternative_config=alternative_config, summary_file=args.summary_file)
+    launch_cv(args.config_folder, alternative_config=alternative_config)
     print("done!")
