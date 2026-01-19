@@ -87,6 +87,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             model_size=self.model_size,
             hidden_dropout=self.hidden_dropout,
             warmup_ratio=self.warmup_ratio,
+            lr_scheduler_type=self.lr_scheduler_type,
             additional_features=self.additional_features,
             n_layers=self.n_layers,
             n_labels=self.n_labels,

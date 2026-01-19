@@ -84,6 +84,7 @@ class PretrainingTrainerFactory(BaseTrainerFactory):
             model_size=self.model_size,
             hidden_dropout=self.hidden_dropout,
             warmup_ratio=self.warmup_ratio,
+            lr_scheduler_type=self.lr_scheduler_type,
             additional_features=self.additional_features,
             gradient_accumulation_steps=self.gradient_accumulation_steps,
             batch_size=self.batch_size,
