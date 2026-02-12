@@ -1,4 +1,5 @@
 from transformers import Trainer
+import os
 from abc import ABC, abstractmethod
 
 
@@ -18,9 +19,9 @@ class EvaluatorTemplate(ABC):
         self.kwargs = kwargs
         self.verbose = vebose
 
-    def evaluate(self, test_set, tokenized_dataset):
+    def evaluate(self, test_set, tokenized_dataset, fold=None):
         print(f"Evaluating model, outputting to {self.output_dir}")
-        return self.evaluate_implementation(test_set, tokenized_dataset)
+        return self.evaluate_implementation(test_set, tokenized_dataset, fold)
 
     @abstractmethod
     def evaluate_implementation(self, test_set, tokenized_dataset):
@@ -32,3 +33,8 @@ class EvaluatorTemplate(ABC):
         for arg in args:
             if arg not in self.kwargs:
                 raise ValueError(f"Argument {arg} not found in kwargs.")
+
+    def save_results_csv(self, data_table, base_path, fold):
+        data_table.to_csv(
+            os.path.join(base_path, f"results{f'_{fold}' if fold else ''}.csv")
+        )

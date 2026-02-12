@@ -13,7 +13,7 @@ import random
 
 class ClassificationEvaluator(EvaluatorTemplate):
     def evaluate_implementation(
-        self, test_set: BaseDatasetFactory, tokenized_dataset: DatasetDict, average: str = "binary"
+        self, test_set: BaseDatasetFactory, tokenized_dataset: DatasetDict, fold:int, average: str = "binary"
     ):
         y_pred = np.argmax(
             self.trainer.predict(
@@ -51,7 +51,7 @@ class ClassificationEvaluator(EvaluatorTemplate):
             baseline_predictions_random
         )
         
-        self.save_output(test_set, y_pred, y_true)
+        self.save_output(test_set, y_pred, y_true, fold)
         result_metrics = {
             "recall_most_frequent_baseline": recall_score(
                 y_true, most_common_id * np.ones(len(y_true)), average=average
@@ -106,7 +106,7 @@ class ClassificationEvaluator(EvaluatorTemplate):
         
         return result_metrics
 
-    def save_output(self, X_test, y_pred, y_true):
+    def save_output(self, X_test, y_pred, y_true, fold):
         """
         Save the output of the model. More precisely, save the predicted and true yields, as well as the SMILES/CGR strings.
 
@@ -130,7 +130,7 @@ class ClassificationEvaluator(EvaluatorTemplate):
         )
 
         data_table["original_input"] = X_test["original_input"].to_numpy()
-        data_table.to_csv(os.path.join(base_path, "results.csv"))
+        self.save_results_csv(data_table, base_path=base_path, fold=fold)
         
         # Log to W&B with error handling to prevent crashes on network timeouts
         try:

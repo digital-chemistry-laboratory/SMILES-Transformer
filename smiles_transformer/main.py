@@ -23,6 +23,7 @@ import random
 import numpy as np
 import torch
 
+
 def preprocess(params):
     """
     Preprocesses the dataset and loads the vocabulary.
@@ -333,8 +334,8 @@ def preprocess(params):
 
 def seed_everything(seed=42):
 
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
     random.seed(seed)
     np.random.seed(seed)
@@ -344,7 +345,7 @@ def seed_everything(seed=42):
 
     torch.backends.cudnn.deterministic = False
     torch.backends.cudnn.benchmark = True
-    
+
 
 def train(
     params,
@@ -437,7 +438,9 @@ def train(
         auto_find_batch_size=params["training_settings"]["auto_find_batch_size"],
         fp16=params["training_settings"]["fp16"],
         warmup_ratio=params["training_settings"]["warmup_ratio"],
-        lr_scheduler_type=params["training_settings"].get("lr_scheduler_type", "linear"),
+        lr_scheduler_type=params["training_settings"].get(
+            "lr_scheduler_type", "linear"
+        ),
         additional_features=params["dataset_settings"]["additional_features"] or [],
         n_layers=params["training_settings"]["n_layers"],
         n_labels=n_labels,
@@ -455,25 +458,36 @@ def train(
         wandb_run_name=params["general_settings"].get("wandb_run_name", None),
         params=params,
         label_smoothing=params["training_settings"].get("label_smoothing", 0.0),
-        freeze_encoder_steps=params["training_settings"].get("freeze_encoder_steps", None),
+        freeze_encoder_steps=params["training_settings"].get(
+            "freeze_encoder_steps", None
+        ),
         gradual_unfreezing=params["training_settings"].get("gradual_unfreezing", False),
         layerdrop_prob=params["training_settings"].get("layerdrop_prob", None),
-        stochastic_depth_prob=params["training_settings"].get("stochastic_depth_prob", None),
+        stochastic_depth_prob=params["training_settings"].get(
+            "stochastic_depth_prob", None
+        ),
     )
     if params["general_settings"]["verbose"]:
         print("Trainer initialized. Training model.")
     model = trainer.create(dataset=X)
     if params["general_settings"]["verbose"]:
         print("Model trained. Evaluating model if in finetuning mode.")
-    os.makedirs(os.path.dirname(os.path.join(
-            params["general_settings"]["path_to_outputs"],
-            params["training_settings"]["model_mode"],
-            params["training_settings"]["model_type"],
-            params["training_settings"]["model_size"],
-            params["general_settings"]["tokenizer_kind"],
-            "overall_config.json",
-        )), exist_ok=True)
-    model_mode = "pretraining" if params["training_settings"]["model_mode"] else "finetuning"
+    os.makedirs(
+        os.path.dirname(
+            os.path.join(
+                params["general_settings"]["path_to_outputs"],
+                params["training_settings"]["model_mode"],
+                params["training_settings"]["model_type"],
+                params["training_settings"]["model_size"],
+                params["general_settings"]["tokenizer_kind"],
+                "overall_config.json",
+            )
+        ),
+        exist_ok=True,
+    )
+    model_mode = (
+        "pretraining" if params["training_settings"]["model_mode"] else "finetuning"
+    )
     with open(
         os.path.join(
             params["general_settings"]["path_to_outputs"],
@@ -532,9 +546,13 @@ def evaluate(params, model, trainer):
             label_counter=trainer.dataset_factory.label_counter,
         )
     if params["training_settings"]["model_mode"] != "pretraining":
-        
+        nfolds = (
+            int(params["test_settings"]["test_size"].split("/")[0])
+            if "/" in params["test_settings"]["test_size"]
+            else None
+        )
         model_evaluation = evaluator.evaluate(
-            trainer.test_set, trainer.tokenized_dataset
+            trainer.test_set, trainer.tokenized_dataset, nfolds
         )
 
     if params["general_settings"]["verbose"]:
@@ -584,14 +602,18 @@ def check_parameters(params):
         assert (
             params["training_settings"]["run_name"] is not None
         ), "if the model is not pretraining, a run name must be provided in the configuration file."
-    
-    vocab_path = path_finder(prefix=params["vocabulary_settings"]["path_to_vocab_folder"],path_from_source=f"vocab_{params['general_settings']['tokenizer_kind']}.txt",is_file=True,)
+
+    vocab_path = path_finder(
+        prefix=params["vocabulary_settings"]["path_to_vocab_folder"],
+        path_from_source=f"vocab_{params['general_settings']['tokenizer_kind']}.txt",
+        is_file=True,
+    )
     print(f"vocab_path = {vocab_path}")
-    
+
     assert os.path.exists(
         params["vocabulary_settings"]["path_to_vocab_folder"]
     ), f"Vocabulary file not found at {params['vocabulary_settings']['path_to_vocab_folder']}.Verify that the path is correct, and that the file exists!"
-    
+
     vocab_path = params["vocabulary_settings"]["path_to_vocab_folder"]
     if not os.path.exists(vocab_path):
         os.makedirs(vocab_path, exist_ok=True)
@@ -625,7 +647,7 @@ def main(path_to_config_folder, alternative_config=None):
 
     if alternative_config is None:
         alternative_config = {}
-        
+
     for category in alternative_config:
         params[category].update(alternative_config[category])
     if params["general_settings"]["random_state"] is not None:
@@ -687,11 +709,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--override",
         type=str,
-        help='JSON string to override config. Example: \'{"training_settings": {"learning_rate": 1e-5}}\''
+        help='JSON string to override config. Example: \'{"training_settings": {"learning_rate": 1e-5}}\'',
     )
 
-    
     args = parser.parse_args()
-    
+
     alternative_config = json.loads(args.override) if args.override else {}
     main(args.config_folder, alternative_config=alternative_config)
