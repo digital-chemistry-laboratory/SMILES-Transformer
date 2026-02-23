@@ -12,13 +12,13 @@ from datasets import DatasetDict
 
 class RegressionEvaluator(EvaluatorTemplate):
     def evaluate_implementation(
-        self, test_set: BaseDatasetFactory, tokenized_dataset: DatasetDict
+        self, test_set: BaseDatasetFactory, tokenized_dataset: DatasetDict, fold: int
     ):
         y_pred = self.trainer.predict(tokenized_dataset["test"]).predictions
 
         y_true = np.array(test_set["label"]).reshape(-1, 1)
         y_pred = y_pred * self.kwargs["std"] + self.kwargs["mean"]
-        self.save_output(test_set, y_pred, y_true)
+        self.save_output(test_set, y_pred, y_true, fold)
         result_metrics = {
             "median_baseline_MAE": mean_absolute_error(
                 y_true,
@@ -46,11 +46,20 @@ class RegressionEvaluator(EvaluatorTemplate):
             ),
         }
         print("result metrics:", result_metrics)
-        self.wandb_run.summary.update(result_metrics)
-        self.wandb_run.log(result_metrics, commit=True)
+
+        # Log metrics to W&B with error handling
+        try:
+            self.wandb_run.summary.update(result_metrics)
+            self.wandb_run.log(result_metrics, commit=True)
+        except Exception as e:
+            print(f"Warning: Failed to log metrics to W&B: {e}")
+            print(
+                "Continuing without W&B logging. Metrics are still computed and returned."
+            )
+
         return result_metrics
 
-    def save_output(self, X_test, yield_predicted, yield_true):
+    def save_output(self, X_test, yield_predicted, yield_true, fold=None):
         """
         Save the output of the model. More precisely, save the predicted and true yields, as well as the SMILES/CGR strings.
 
@@ -62,7 +71,7 @@ class RegressionEvaluator(EvaluatorTemplate):
         Returns:
             None
         """
-        base_path = os.path.join(self.output_dir, "results/")
+        base_path = os.path.join(self.output_dir, f"results")
         os.makedirs(base_path, exist_ok=True)
 
         data_table = pd.DataFrame(
@@ -72,11 +81,17 @@ class RegressionEvaluator(EvaluatorTemplate):
                 "true": yield_true.flatten(),
             }
         )
-
         data_table["original_smiles"] = X_test["original_input"].to_numpy()
-        data_table.to_csv(os.path.join(base_path, "results.csv"))
-        samples = wandb.Table(dataframe=data_table)
-        self.wandb_run.log({"Samples": samples})
+        self.save_results_csv(data_table, base_path=base_path, fold=fold)
+        # Log to W&B with error handling to prevent crashes on network timeouts
+        try:
+            samples = wandb.Table(dataframe=data_table)
+            self.wandb_run.log({"Samples": samples})
+        except Exception as e:
+            print(f"Warning: Failed to log samples to W&B: {e}")
+            print(
+                "Continuing without W&B logging. Results are still saved to results.csv"
+            )
         plt.scatter(yield_true, yield_predicted)
         plt.xlabel("True label")
         plt.ylabel("Predicted label")

@@ -152,7 +152,7 @@ class CVLabeledSplitter(BaseSplitterFactory):
             eval_size = int(eval_size * len(data))
         assert eval_size < len(data[data["split"] == "train"]), self.len_eval_size_error
         # randomly assign the value "eval" to eval_size number of points, but the selected points MUST have "train" in their "split" column:
-        eval_indices = data[data["split"] == "train"].sample(eval_size).index
+        eval_indices = data[data["split"] == "train"].sample(n=eval_size, random_state=self.random_state).index
         data.iloc[eval_indices, data.columns.get_loc("split")] = "eval"
 
         data = data.reset_index(drop=True)

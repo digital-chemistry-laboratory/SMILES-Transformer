@@ -4,7 +4,7 @@ import re
 
 class IndividualTokenizer(BaseTokenizerTemplate):
     pattern = re.compile(
-        r"([.]|[A-Z][a-z]|\[|\]|[A-Z]|[a-z]|\(|\)|=|#|-|\+|\\+|\/|:|~|@|\?|>|\*|\$|\%[0-9]{2}|[0-9]{1,2}|\^|{|}|\|)"  # noqa 605
+        r"([.]|[A-Z][a-z]|\[|\]|[A-Z]|[a-z]|\(|\)|=|#|-|\+|\\|\/|:|~|@|\?|>|\*|\$|\%[0-9]{2}|[0-9]|\^|{|}|\|)"  # noqa 605
     )
     tokenizer_kind = "individual"
 

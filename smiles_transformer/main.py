@@ -21,6 +21,8 @@ from datetime import datetime
 import json
 import random
 import numpy as np
+import torch
+
 
 def preprocess(params):
     """
@@ -288,7 +290,13 @@ def preprocess(params):
     )
     if params["general_settings"]["verbose"]:
         print(f"Dataset Loaded: {X.shape[0]} SMILES\n Loading Vocab.")
-        print(tabulate(X.head(), headers="keys"))
+        # print only non-additional-feature columns for readability
+        additional_features = params["dataset_settings"].get("additional_features", [])
+        if additional_features:
+            cols_to_print = [col for col in X.columns if col not in additional_features]
+            print(tabulate(X[cols_to_print].head(), headers="keys"))
+        else:
+            print(tabulate(X.head(), headers="keys"))
 
     vocab = Vocab(
         tokenizer,
@@ -306,7 +314,7 @@ def preprocess(params):
             params["vocabulary_settings"]["generate_vocab"],
         )
     if params["general_settings"]["verbose"]:
-        print(f"Vocab Loaded: {vocab.size} tokens")
+        print(f"Vocab Loaded: {vocab.size} tokens, from: {vocab.path_to_vocab_file}")
 
     if params["vocabulary_settings"]["terminate_after_vocab_creation"]:
         print("Vocab created. Terminating.")
@@ -324,24 +332,19 @@ def preprocess(params):
     )
 
 
-
-
 def seed_everything(seed=42):
-    os.environ['PYTHONHASHSEED'] = '42'
-    os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
-    import torch
+
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-    # CRITICAL: These two lines make CUDA operations deterministic
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-
-    # For PyTorch >= 1.8
-    torch.use_deterministic_algorithms(True, warn_only=True)
+    torch.backends.cudnn.deterministic = False
+    torch.backends.cudnn.benchmark = True
 
 
 def train(
@@ -368,7 +371,6 @@ def train(
     Returns:
         tuple: Tuple containing the model and the trainer.
     """
-
     init_dict = {
         "pretraining": (
             PretrainingTrainerFactory,
@@ -436,6 +438,9 @@ def train(
         auto_find_batch_size=params["training_settings"]["auto_find_batch_size"],
         fp16=params["training_settings"]["fp16"],
         warmup_ratio=params["training_settings"]["warmup_ratio"],
+        lr_scheduler_type=params["training_settings"].get(
+            "lr_scheduler_type", "linear"
+        ),
         additional_features=params["dataset_settings"]["additional_features"] or [],
         n_layers=params["training_settings"]["n_layers"],
         n_labels=n_labels,
@@ -443,21 +448,50 @@ def train(
         logging_steps=params["training_settings"]["logging_steps"],
         checkpoint_number=params["training_settings"]["checkpoint_number"],
         save_total_limit=params["training_settings"]["save_total_limit"],
+        max_grad_norm=params["training_settings"].get("max_grad_norm", 1.0),
+        weight_decay=params["training_settings"].get("weight_decay", 0.0),
         n_trials=None,  # params["training_settings"]["n_trials"],
         random_state=params["general_settings"]["random_state"],
         save_dataset_path=params["dataset_settings"]["save_dataset_path"],
         load_dataset_path=params["dataset_settings"]["load_dataset_path"],
+        wandb_group_name=params["general_settings"].get("wandb_group_name", None),
+        wandb_run_name=params["general_settings"].get("wandb_run_name", None),
         params=params,
+        label_smoothing=params["training_settings"].get("label_smoothing", 0.0),
+        freeze_encoder_steps=params["training_settings"].get(
+            "freeze_encoder_steps", None
+        ),
+        gradual_unfreezing=params["training_settings"].get("gradual_unfreezing", False),
+        layerdrop_prob=params["training_settings"].get("layerdrop_prob", None),
+        stochastic_depth_prob=params["training_settings"].get(
+            "stochastic_depth_prob", None
+        ),
     )
     if params["general_settings"]["verbose"]:
         print("Trainer initialized. Training model.")
     model = trainer.create(dataset=X)
     if params["general_settings"]["verbose"]:
         print("Model trained. Evaluating model if in finetuning mode.")
+    os.makedirs(
+        os.path.dirname(
+            os.path.join(
+                params["general_settings"]["path_to_outputs"],
+                params["training_settings"]["model_mode"],
+                params["training_settings"]["model_type"],
+                params["training_settings"]["model_size"],
+                params["general_settings"]["tokenizer_kind"],
+                "overall_config.json",
+            )
+        ),
+        exist_ok=True,
+    )
+    model_mode = (
+        "pretraining" if params["training_settings"]["model_mode"] else "finetuning"
+    )
     with open(
         os.path.join(
             params["general_settings"]["path_to_outputs"],
-            params["training_settings"]["model_mode"],
+            model_mode,
             params["training_settings"]["model_type"],
             params["training_settings"]["model_size"],
             params["general_settings"]["tokenizer_kind"],
@@ -512,9 +546,13 @@ def evaluate(params, model, trainer):
             label_counter=trainer.dataset_factory.label_counter,
         )
     if params["training_settings"]["model_mode"] != "pretraining":
-
+        nfolds = (
+            int(params["test_settings"]["test_size"].split("/")[0])
+            if "/" in params["test_settings"]["test_size"]
+            else None
+        )
         model_evaluation = evaluator.evaluate(
-            trainer.test_set, trainer.tokenized_dataset
+            trainer.test_set, trainer.tokenized_dataset, nfolds
         )
 
     if params["general_settings"]["verbose"]:
@@ -564,16 +602,26 @@ def check_parameters(params):
         assert (
             params["training_settings"]["run_name"] is not None
         ), "if the model is not pretraining, a run name must be provided in the configuration file."
-    # vocab_path = path_finder(prefix=params["vocabulary_settings"]["path_to_vocab_folder"],path_from_source=f"vocab_{params['general_settings']['tokenizer_kind']}.txt",is_file=True,)
+
+    vocab_path = path_finder(
+        prefix=params["vocabulary_settings"]["path_to_vocab_folder"],
+        path_from_source=f"vocab_{params['general_settings']['tokenizer_kind']}.txt",
+        is_file=True,
+    )
+    print(f"vocab_path = {vocab_path}")
 
     assert os.path.exists(
         params["vocabulary_settings"]["path_to_vocab_folder"]
     ), f"Vocabulary file not found at {params['vocabulary_settings']['path_to_vocab_folder']}.Verify that the path is correct, and that the file exists!"
 
+    vocab_path = params["vocabulary_settings"]["path_to_vocab_folder"]
+    if not os.path.exists(vocab_path):
+        os.makedirs(vocab_path, exist_ok=True)
+
     return
 
 
-def main(path_to_config_folder, alternative_config={}):
+def main(path_to_config_folder, alternative_config=None):
     """
     Main function of the project. Loads the dataset, the vocabulary, and trains the model.
 
@@ -583,7 +631,6 @@ def main(path_to_config_folder, alternative_config={}):
     Returns:
         None
     """
-
     # prepare which factory is used for each factory type
 
     print(f"Starting main function at {datetime.now().strftime('%d-%m-%Y %H:%M:%S')}")
@@ -598,9 +645,13 @@ def main(path_to_config_folder, alternative_config={}):
     if params["general_settings"]["verbose"]:
         print("Config Loaded")
 
+    if alternative_config is None:
+        alternative_config = {}
+
     for category in alternative_config:
         params[category].update(alternative_config[category])
-    seed_everything(params["general_settings"]["random_state"])
+    if params["general_settings"]["random_state"] is not None:
+        seed_everything(params["general_settings"]["random_state"])
     (
         X,
         vocab,
@@ -655,5 +706,13 @@ if __name__ == "__main__":
     # If you want to support additional optional arguments, add them here:
     # parser.add_argument("--other", type=str, help="Some other argument")
 
+    parser.add_argument(
+        "--override",
+        type=str,
+        help='JSON string to override config. Example: \'{"training_settings": {"learning_rate": 1e-5}}\'',
+    )
+
     args = parser.parse_args()
-    main(args.config_folder)
+
+    alternative_config = json.loads(args.override) if args.override else {}
+    main(args.config_folder, alternative_config=alternative_config)

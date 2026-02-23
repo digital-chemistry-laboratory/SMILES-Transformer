@@ -28,6 +28,7 @@ class BaseModelFactory(ABC):
         model_size (str): Size of the model (e.g., 'small', 'medium', 'large').
         hidden_dropout (float): Dropout rate for hidden layers in the model.
         warmup_ratio (float): Warmup ratio for learning rate scheduling.
+        lr_scheduler_type (str): Learning rate scheduler type for Trainer.
         additional_features (dict): Additional features to be added to the model.
         layer_width (int): Width of the hidden layers in the model.
         n_layers (int): Number of hidden layers in the model.
@@ -38,6 +39,8 @@ class BaseModelFactory(ABC):
         fp16 (bool): Whether to use mixed precision (FP16) training.
         logging_steps (int): Frequency of logging training progress.
         save_total_limit (int): Maximum number of saved checkpoints.
+        max_grad_norm (float): Maximum gradient norm for gradient clipping. Defaults to 1.0.
+        weight_decay (float): Weight decay coefficient for L2 regularization. Defaults to 0.0.
         output_dir (str): Directory for saving model outputs and checkpoints.
         smilestokenizer: Smiles tokenizer used for processing the input data. This needs to be an instance of the SmilesTokenizer class.
         init_before_create_error (str): Error message for incorrect initialization sequence.
@@ -71,6 +74,7 @@ class BaseModelFactory(ABC):
         model_size="small",
         hidden_dropout=0.1,
         warmup_ratio=0.03,
+        lr_scheduler_type="linear",
         additional_features=[],
         layer_width=2400,
         n_layers=3,
@@ -82,6 +86,13 @@ class BaseModelFactory(ABC):
         logging_steps=10,
         save_total_limit=None,
         random_state=None,
+        weight_decay=0.0,
+        max_grad_norm=1.0,
+        label_smoothing=0.0,
+        freeze_encoder_steps=None,
+        gradual_unfreezing=False,
+        layerdrop_prob=None,
+        stochastic_depth_prob=None,
     ):
         self.model_type = model_type
         self.dataset = dataset
@@ -97,6 +108,7 @@ class BaseModelFactory(ABC):
         self.model_size = model_size
         self.hidden_dropout = hidden_dropout
         self.warmup_ratio = warmup_ratio
+        self.lr_scheduler_type = lr_scheduler_type
         self.additional_features = additional_features
         self.layer_width = layer_width
         self.n_layers = n_layers
@@ -110,6 +122,13 @@ class BaseModelFactory(ABC):
         self.output_dir = output_dir
         self.smilestokenizer = smilestokenizer
         self.random_state = random_state
+        self.weight_decay = weight_decay
+        self.max_grad_norm = max_grad_norm
+        self.label_smoothing = label_smoothing
+        self.freeze_encoder_steps = freeze_encoder_steps
+        self.gradual_unfreezing = gradual_unfreezing
+        self.layerdrop_prob = layerdrop_prob
+        self.stochastic_depth_prob = stochastic_depth_prob
         assert self.smilestokenizer is not None, self.no_tokenizer_error
 
         # assert isinstance(self.smilestokenizer, BaseTokenizerTemplate), self.tokenizer_not_instance

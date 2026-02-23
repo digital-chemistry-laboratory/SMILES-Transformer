@@ -64,7 +64,10 @@ class TranslationModelFactory(BaseModelFactory):
             greater_is_better=False,
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
+            max_grad_norm=self.max_grad_norm,
         )
+        print("Final training arguments recieved:")
+        print(training_args.to_json_string())
         return Seq2SeqTrainer(
             model=self.load_encoder_decoder(),
             args=training_args,

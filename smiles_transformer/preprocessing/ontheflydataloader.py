@@ -134,6 +134,6 @@ class OnTheFlyDataLoader(BaseDataLoader):
                     print(
                         f"Warning: the filtering criteria are too strict. Only {len(X_filtered)} reactions were found."
                     )
-                return
+                return pd.DataFrame()
 
         return X.iloc[self.old_index : (self.old_index + batch_size)]  # noqa E203

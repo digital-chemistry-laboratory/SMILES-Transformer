@@ -53,6 +53,7 @@ class BaseTrainerFactory(ABC):
         auto_find_batch_size (bool): Whether to automatically find the optimal batch size.
         fp16 (bool): Whether to use 16-bit (mixed) precision training.
         warmup_ratio (float): Warmup ratio for learning rate scheduler.
+        lr_scheduler_type (str): Learning rate scheduler type for Trainer.
         additional_features (list): List of additional features to include.
         n_layers (int): Number of layers in the model.
         n_labels (int): Number of labels in the dataset.
@@ -60,6 +61,8 @@ class BaseTrainerFactory(ABC):
         logging_steps (int): Number of steps between logging.
         checkpoint_number (int or str, optional): Specific checkpoint number to load. Defaults to None.
         save_total_limit (int, optional): Maximum number of checkpoints to save. Defaults to None.
+        max_grad_norm (float): Maximum gradient norm for gradient clipping. Defaults to 1.0.
+        weight_decay (float): Weight decay coefficient for L2 regularization. Defaults to 0.0.
         n_trials (int, optional): Number of trials for hyperparameter search. Defaults to None.
         random_state (int, optional): Random state for reproducibility. Defaults to None.
         save_dataset_path (str): Path to save the preprocessed dataset.
@@ -139,6 +142,7 @@ class BaseTrainerFactory(ABC):
         auto_find_batch_size=True,
         fp16=False,
         warmup_ratio=0.03,
+        lr_scheduler_type="linear",
         additional_features=[],
         n_layers=3,
         n_labels=1,
@@ -152,6 +156,15 @@ class BaseTrainerFactory(ABC):
         load_dataset_path=None,
         params={},
         skip_training=False,
+        weight_decay=0.0,
+        max_grad_norm=1.0,
+        label_smoothing=0.0,
+        freeze_encoder_steps=None,
+        gradual_unfreezing=False,
+        layerdrop_prob=None,
+        stochastic_depth_prob=None,
+        wandb_group_name=None,
+        wandb_run_name=None,
         *args,
         **kwargs,
     ):
@@ -187,6 +200,7 @@ class BaseTrainerFactory(ABC):
         self.auto_find_batch_size = auto_find_batch_size
         self.fp16 = fp16
         self.warmup_ratio = warmup_ratio
+        self.lr_scheduler_type = lr_scheduler_type
         self.additional_features = additional_features
         self.n_layers = n_layers
         self.n_labels = n_labels
@@ -194,18 +208,27 @@ class BaseTrainerFactory(ABC):
         self.logging_steps = logging_steps
         self.checkpoint_number = checkpoint_number
         self.save_total_limit = save_total_limit
+        self.max_grad_norm = max_grad_norm
+        self.weight_decay = weight_decay
         self.n_trials = n_trials
         self.random_state = random_state
         self.save_dataset_path = save_dataset_path
         self.load_dataset_path = load_dataset_path
         self.params = params
         self.skip_training=skip_training
+        self.label_smoothing = label_smoothing
+        self.freeze_encoder_steps = freeze_encoder_steps
+        self.gradual_unfreezing = gradual_unfreezing
+        self.layerdrop_prob = layerdrop_prob
+        self.stochastic_depth_prob = stochastic_depth_prob
 
         self.run = wandb.init(
             project="Smiles_CGR_transformer",
             mode="disabled" if self.test_mode else "online",
             reinit=False,
             config=params,
+            group=wandb_group_name,
+            name=wandb_run_name,
         )
 
         self.define_tokenizer(smilestokenizer)
@@ -242,7 +265,7 @@ class BaseTrainerFactory(ABC):
         )
         if params:
             print("-----------------------------------------")
-            print("RECIEVED PARAMETERS:")
+            print("RECEIVED PARAMETERS:")
             print(json.dumps(params, indent=4))
             print("-----------------------------------------")
 

@@ -50,13 +50,18 @@ class PretrainingModelFactory(BaseModelFactory):
             gradient_accumulation_steps=self.gradient_accumulation_steps,
             fp16=self.fp16,
             warmup_ratio=self.warmup_ratio,
+            lr_scheduler_type=self.lr_scheduler_type,
             load_best_model_at_end=True,
             metric_for_best_model="eval_loss",
             greater_is_better=False,
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
+            max_grad_norm=self.max_grad_norm,
+            weight_decay=self.weight_decay,
             seed=self.random_state if self.random_state is not None else 42,
         )
+        print("Final training arguments recieved:")
+        print(training_args.to_json_string())
         self.bert_config = BertConfig(
             vocab_size=self.smilestokenizer.vocab_size, **self.model_config
         )

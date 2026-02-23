@@ -38,10 +38,11 @@ class PremadeDataLoader(BaseDataLoader):
         Returns:
             np.ndarray: Processed dataset ready for use.
         """
+
         base_directory = path_finder(self.path, self.dataset_name.replace(".csv", ""))
-        assert type(self.test_size) is str, self.test_size_not_str
+        assert isinstance(self.test_size, str), self.test_size_not_str
         fold_number = int(self.test_size.split("/")[0])
-        directory = os.path.join(base_directory, f"fold_{fold_number-1}")
+        directory = os.path.join(base_directory, f"fold_{fold_number - 1}")
 
         df_train = self.init_pandas(
             os.path.join(directory, "aam_train.csv"), separator, n_points=self.n_points
@@ -59,7 +60,8 @@ class PremadeDataLoader(BaseDataLoader):
         df_eval["split"] = "eval"
 
         if self.verbose:
-            print(f"loaded data for fold {fold_number}")
+            print(f"Loaded data for fold {fold_number}")
+
         df_full = pd.concat([df_train, df_test, df_eval], ignore_index=True)
         df_full["original_input"] = df_full[self.original_column_name]
         return self.process(

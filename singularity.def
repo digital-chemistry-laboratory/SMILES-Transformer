@@ -5,6 +5,8 @@ From: python:3.10.4
     smiles_transformer/ /smiles_transformer/
     requirements.txt /requirements.txt
     setup.py /setup.py
+    /cluster/home/gsulpizio/github_token.txt /root/github_token.txt
+
 
 %environment
     export WANDB_API_KEY=""
@@ -13,25 +15,46 @@ From: python:3.10.4
     export WANDB_CACHE_DIR=""
     export WANDB_DATA_DIR=""
 
-
 %post
-    # Install necessary packages
-    apt-get update && apt-get install -y python3-pip
+    # --- 1. System Updates ---
+    apt-get update && apt-get install -y python3-pip git
+
+    # --- 2. Configure GitHub Credentials (Universal Method) ---
+    # This creates a credentials file that git uses automatically for ALL github.com repos.
+    # It replaces the manual "git config" commands.
+    GITHUB_TOKEN=$(cat /root/github_token.txt)
+    echo "machine github.com login $GITHUB_TOKEN password x-oauth-basic" > /root/.netrc
+    chmod 600 /root/.netrc
+
+    # PREVENT HANGING: This tells git to fail immediately if it needs a password
+    # rather than pausing the build to ask for input.
+    export GIT_TERMINAL_PROMPT=0
+
+    # --- 3. Python Setup ---
     pip install --upgrade pip
-    pip install --no-cache-dir -r /requirements.txt
+    pip install "Cython<3" "numpy<2" wheel setuptools
+
+    # --- 4. Install Requirements ---
+    # --no-build-isolation is crucial for CGRtools
+    pip install --no-build-isolation --no-cache-dir -r /requirements.txt
+
+    # --- 5. Install Local Package ---
+    # This will now use the credentials in /root/.netrc for both 'gSulpizio' AND 'heid-lab'
     pip install .
 
-    # Create necessary directories
+    # --- 6. Cleanup ---
+    rm /root/github_token.txt
+    rm /root/.netrc
+
+    # --- 7. Create Directories ---
     mkdir -p /data/
     mkdir -p /configurations/
     mkdir -p /outputs/
 
 %runscript
-    # Check if any arguments are provided
     if [ -z "$*" ]; then
         echo "No arguments provided. Please specify a Python module or script to run."
         exit 1
     else
-        # Run the specified Python module/script with the provided arguments
         exec python -m $*
     fi

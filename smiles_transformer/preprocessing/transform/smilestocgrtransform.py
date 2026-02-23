@@ -4,6 +4,35 @@ from smiles_transformer.preprocessing.transform.transformtemplate import (
     TransformTemplate,
 )
 from tqdm import tqdm
+from rdkit import Chem
+
+
+def kekulize_reaction(smiles: str) -> str:
+    """
+    Kekulize the reaction SMILES.
+    """
+
+    reactant_smi, product_smi = smiles.split(">>")
+
+    reactants_mol = Chem.MolFromSmiles(reactant_smi)
+    products_mol = Chem.MolFromSmiles(product_smi)
+
+    for mol in [reactants_mol, products_mol]:
+        Chem.Kekulize(mol, clearAromaticFlags=True)
+
+    reactants_kek = Chem.MolToSmiles(
+        reactants_mol,
+        kekuleSmiles=True,
+        #canonical=False,
+    )
+    products_kek = Chem.MolToSmiles(
+        products_mol,
+        kekuleSmiles=True,
+        #canonical=False,
+    )
+
+    return f"{reactants_kek}>>{products_kek}"
+
 
 
 # TODO: add TESTS
@@ -19,7 +48,7 @@ class SMILEStoCGRTransform(TransformTemplate):
     parser = SMILESRead.create_parser(ignore=True)
     num_failed_conversions = 0
 
-    def auto_convert(self, smiles: str, explicify_hydrogens=True) -> str:
+    def auto_convert(self, smiles: str, explicify_hydrogens=True, kekulize=True) -> str:
         """
         Converts an atom-mapped SMILES string to a CGR string if it is a vanilla atom-mapped SMILES.
         Implicifies hydrogens.
@@ -33,6 +62,8 @@ class SMILEStoCGRTransform(TransformTemplate):
         """  # noqa 501
 
         smiles = str(smiles)
+        if kekulize:
+            smiles = kekulize_reaction(smiles)
 
         try:
             m = self.parser(smiles)

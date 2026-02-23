@@ -170,6 +170,12 @@ The initial learning rate for AdamW optimizer.
 
 - **Type**: `float`
 
+**lr_scheduler_type**
+Learning rate scheduler type used by the Hugging Face Trainer.
+
+- **Type**: `string`
+- **Options**: `linear`, `cosine`, `cosine_with_restarts`, `polynomial`, `constant`, `constant_with_warmup`
+
 **hidden_dropout**
 The dropout probability for all fully connected layers in the model.
 
@@ -301,6 +307,24 @@ The maximum number of checkpoints to keep. Older checkpoints are automatically d
 - **Type**: `integer` or `null`
 - **Default**: `3`
 - **Behavior**: Set to `null` to disable this limit and keep all checkpoints.
+
+**max_grad_norm**
+The maximum gradient norm for gradient clipping to prevent exploding gradients during training.
+
+- **Type**: `float`
+- **Default**: `1.0`
+- **Behavior**: Lower values (e.g., `0.5`) provide stronger clipping, higher values (e.g., `5.0`) are more permissive.
+
+**weight_decay**
+The weight decay coefficient for L2 regularization applied to model weights.
+
+- **Type**: `float`
+- **Default**: `0.0`
+- **Behavior**:
+    - `0.0`: No weight decay (no regularization)
+    - `0.01`: Light regularization (common default for fine-tuning)
+    - `0.1`: Moderate regularization
+    - Higher values increase the penalty on large weights, helping to prevent overfitting
 
 ---
 

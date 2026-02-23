@@ -416,6 +416,7 @@ def train(
         auto_find_batch_size=params["training_settings"]["auto_find_batch_size"],
         fp16=params["training_settings"]["fp16"],
         warmup_ratio=params["training_settings"]["warmup_ratio"],
+        lr_scheduler_type=params["training_settings"].get("lr_scheduler_type", "linear"),
         additional_features=params["dataset_settings"]["additional_features"] or [],
         n_layers=params["training_settings"]["n_layers"],
         n_labels=n_labels,
@@ -423,12 +424,19 @@ def train(
         logging_steps=params["training_settings"]["logging_steps"],
         checkpoint_number=params["training_settings"]["checkpoint_number"],
         save_total_limit=params["training_settings"]["save_total_limit"],
+        max_grad_norm=params["training_settings"].get("max_grad_norm", 1.0),
+        weight_decay=params["training_settings"].get("weight_decay", 0.0),
         n_trials=None,  # params["training_settings"]["n_trials"],
         random_state=params["general_settings"]["random_state"],
         save_dataset_path=params["dataset_settings"]["save_dataset_path"],
         load_dataset_path=params["dataset_settings"]["load_dataset_path"],
         params=params,
-        skip_training=True
+        skip_training=True,
+        label_smoothing=params["training_settings"].get("label_smoothing", 0.0),
+        freeze_encoder_steps=params["training_settings"].get("freeze_encoder_steps", None),
+        gradual_unfreezing=params["training_settings"].get("gradual_unfreezing", False),
+        layerdrop_prob=params["training_settings"].get("layerdrop_prob", None),
+        stochastic_depth_prob=params["training_settings"].get("stochastic_depth_prob", None),
     )
     if params["general_settings"]["verbose"]:
         print("Trainer initialized. Training model.")
@@ -460,7 +468,7 @@ def check_parameters(params):
     return
 
 
-def predict(path_to_config_folder, write_path, alternative_config={}):
+def predict(path_to_config_folder, write_path, alternative_config=None):
     """
     Main function of the project. Loads the dataset, the vocabulary, and trains the model.
 
@@ -485,6 +493,8 @@ def predict(path_to_config_folder, write_path, alternative_config={}):
     if params["general_settings"]["verbose"]:
         print("Config Loaded")
     params["general_settings"].update({"test_mode": False})
+    if alternative_config is None:
+        alternative_config = {}
     for category in alternative_config:
         params[category].update(alternative_config[category])
 

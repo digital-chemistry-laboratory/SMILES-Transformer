@@ -87,6 +87,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             model_size=self.model_size,
             hidden_dropout=self.hidden_dropout,
             warmup_ratio=self.warmup_ratio,
+            lr_scheduler_type=self.lr_scheduler_type,
             additional_features=self.additional_features,
             n_layers=self.n_layers,
             n_labels=self.n_labels,
@@ -97,7 +98,14 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
             fp16=self.fp16,
             logging_steps=self.logging_steps,
             save_total_limit=self.save_total_limit,
+            max_grad_norm=self.max_grad_norm,
+            weight_decay=self.weight_decay,
             random_state=self.random_state,
+            label_smoothing=self.label_smoothing,
+            freeze_encoder_steps=self.freeze_encoder_steps,
+            gradual_unfreezing=self.gradual_unfreezing,
+            layerdrop_prob=self.layerdrop_prob,
+            stochastic_depth_prob=self.stochastic_depth_prob,
         )
 
         trainer = model_factory.create()
@@ -128,7 +136,7 @@ class FinetuningTrainerFactory(BaseTrainerFactory):
 
         self.pretrained_model_path = path_finder(
             prefix=self.path_to_outputs,
-            path_from_source=f"/{"finetuning" if self.skip_training else "pretraining"}/{self.model_type}/{self.model_size}/{self.tokenizer_kind}/{self.run_name}",
+            path_from_source=f'/{"finetuning" if self.skip_training else "pretraining"}/{self.model_type}/{self.model_size}/{self.tokenizer_kind}/{self.run_name}',
             is_file=False,
         )
 
