@@ -35,7 +35,7 @@ Here is a quick example of how to use the library:
     - The provided configuration file should already be working for a quick run after adjusting:
         - `path_to_outputs`: path to the output folder where models should be saved
         - `path_to_vocab_folder`: path where the vocabulary files are/should be located located. (ex. <path_to_root>/data/vocab)
-        - `dataset_folder`: the path to the *folder* in which the dataset is in, see below for an example dataset
+        - `dataset_folder`: the path to the folder in which the dataset is in, see below for an example dataset
         - `dataset_name`: the name of the file
         - `column_name`: the name of the column containing the reactions
         - `label_column_name`: only for regression or classification, the name of the column containing the labels.
@@ -46,7 +46,7 @@ Here is a quick example of how to use the library:
     - Generally, you should first pre-train a model by setting `model_mode` to `pretraining`, then finetune it by either
       setting the `model_mode` to `regression` or `classification`. When fine-tuning, set the `run_name` to whatever the
       WandB-set run name of the pre-training run was.
-    - the data should be in a csv file as in this example: [e2sn2.csv](https://github.com/hesther/reactiondatabase/blob/main/data/e2sn2.csv)
+    - The data should be in a csv file as in this example: [e2sn2.csv](https://github.com/hesther/reactiondatabase/blob/main/data/e2sn2.csv)
 - Once done, run the main file to train your model:
 
 ```python
