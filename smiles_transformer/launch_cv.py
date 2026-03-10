@@ -72,11 +72,10 @@ def launch_cv(path_to_config_folder, alternative_config=None):
     for key, fold_values in cv_results.items():
         print(f"{key}: {fold_values}")
         fold_means = [np.mean(runs) for runs in fold_values]
-        fold_medians = [np.median(runs) for runs in fold_values]
         fold_stds = [np.std(runs, ddof=1) for runs in fold_values]
 
-        mean_over_folds = np.mean(fold_medians)
-        std_over_folds = np.std(fold_medians, ddof=1)
+        mean_over_folds = np.mean(fold_means)
+        std_over_folds = np.std(fold_means, ddof=1)
 
         # optional total uncertainty (fold + run stochasticity)
         total_var = std_over_folds**2 + np.mean(np.square(fold_stds))
@@ -84,7 +83,6 @@ def launch_cv(path_to_config_folder, alternative_config=None):
 
         aggregated_results[key] = {
             "fold_means": fold_means,
-            "fold_medians": fold_medians,
             "fold_stds": fold_stds,
             "mean_over_folds": mean_over_folds,
             "std_over_folds": std_over_folds,
@@ -105,7 +103,7 @@ def launch_cv(path_to_config_folder, alternative_config=None):
         arr = np.array(fold_values, dtype=float)  # shape: (n_folds, n_runs)
 
         # Mean over runs (axis=1), then mean over folds
-        fold_means = np.mean(arr, axis=1)
+        fold_means = np.median(arr, axis=1)
         mean_over_folds = np.mean(fold_means)
         std_over_folds = np.std(fold_means, ddof=1)
 
