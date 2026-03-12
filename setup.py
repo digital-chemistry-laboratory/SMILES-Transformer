@@ -14,7 +14,7 @@ setup(
         "cgrtools>=4.1.35",
         "pandas>=2.2.3",
         "rxnmapper @ git+https://github.com/gSulpizio/rxnmapper.git@main#egg=rxnmapper",
-        "sr-smiles @ git+https://github.com/heid-lab/sr-smiles",
+        "sr-smiles>=0.1.0",
         "torch>=2.6.0",
         "transformers>=4.49.0",
         "datasets>=3.3.2",
