@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 import os
 import pandas as pd
-from smiles_transformer.preprocessing.transform.removeatommappingtransform import RemoveAtomMappingTransform
+from smiles_transformer.preprocessing.transform import RemoveAtomMappingTransform, ExplicifyHydrogensTransform
 import numpy as np
 import optuna
 from sklearn.utils.parallel import Parallel, delayed
@@ -17,8 +17,8 @@ from morgandiff import MorganDifferenceEncoder
 # %%
 print("starting v2 MLP morgan diff", flush=True)
 base_path="/cluster/project/jorner/gsulpizio/SMILES-Transformer/data/splits/"
-#dataset_names=[("snar_processed", "exp_activation_energy"), ("e2sn2", "act"), ("GDB_small_val", "dE0"), ("lograte", "lograte"), ("phosphatase_processed", "Conversion"), ("rad6re", "dh")]
-dataset_names=[("rad6re", "dh")]
+dataset_names=[("snar_processed", "exp_activation_energy"), ("e2sn2", "act"), ("GDB_small_val", "dE0"), ("lograte", "lograte"), ("phosphatase_processed", "Conversion"), ("rad6re", "dh")]
+#dataset_names=[("rad6re", "dh")]
 smiles_col="AAM"
 name_output_file= "MLP_drfp.csv"
 print("File will be saved to:", name_output_file, flush=True)
@@ -100,18 +100,24 @@ def predict_np(model, X, device, batch_size=1024):
     return np.concatenate(out)
 
 
-removeatommappingtransform = RemoveAtomMappingTransform()
+remove_transform = RemoveAtomMappingTransform()
+explicit_transform = ExplicifyHydrogensTransform(mapping="remove")
+
 for dataset_name, target_col in dataset_names:
     data[dataset_name] = {"folds":{}}
     for folder in os.listdir(base_path+dataset_name):
         fold_path=base_path+dataset_name+"/"+folder+"/"
-        fold_train=removeatommappingtransform.transform(pd.read_csv(fold_path+"aam_train.csv"), in_column="AAM", out_column="AAM")
-        fold_val=removeatommappingtransform.transform(pd.read_csv(fold_path+"aam_val.csv"), in_column="AAM", out_column="AAM")
-        fold_test=removeatommappingtransform.transform(pd.read_csv(fold_path+"aam_test.csv"), in_column="AAM", out_column="AAM")
+
+        fold_train=remove_transform.transform(pd.read_csv(fold_path+"aam_train.csv"), in_column=smiles_col, out_column=smiles_col)
+        fold_val=remove_transform.transform(pd.read_csv(fold_path+"aam_val.csv"), in_column=smiles_col, out_column=smiles_col)
+        fold_test=remove_transform.transform(pd.read_csv(fold_path+"aam_test.csv"), in_column=smiles_col, out_column=smiles_col)
+        if dataset_name=="rad6re":
+            fold_train=explicit_transform.transform(fold_train, in_column=smiles_col, out_column=smiles_col)
+            fold_val=explicit_transform.transform(fold_val, in_column=smiles_col, out_column=smiles_col)
+            fold_test=explicit_transform.transform(fold_test, in_column=smiles_col, out_column=smiles_col)
+
         data[dataset_name]["folds"][folder] = {"train": fold_train, "val": fold_val, "test": fold_test}
         data[dataset_name]["target_col"] = target_col
-
-        
 
 
         add_cols=list(data[dataset_name]["folds"][folder]["train"].columns)
